@@ -33,7 +33,6 @@ public:
 	Sprite(LPD3DXSPRITE sprite, LPDIRECT3DTEXTURE9 texture, int width, int height, int startIndexOfSprite, int count);
 	~Sprite();
 	void updateSprite();
-	void updateIndex();
 
 	//Ex: player->drawSprite(0, 0, 16, 32, D3DXVECTOR3(10, 10, 0));
     void drawSprite(int x, int y, int width, int height, D3DXVECTOR3 position);	//draw 1 sprite
@@ -46,7 +45,4 @@ public:
 
 	void setHeight(int value);
 	int getHeight();
-
-	int GetIndex();
-	int GetCount();
 };

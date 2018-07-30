@@ -3,15 +3,14 @@
 #include <d3dx9.h>
 #include "Define.h"
 #include "Samus.h"
-#include "Skree.h"
 #include "Zoomer.h"
 #include <vector>
 #include "Texture.h"
 #include "Grid.h"
-#include "Gate.h"
+#include "Bullet.h"
+#include "Energy.h"
 
 using namespace std;
-//#include "BulletManager.h"
 
 /*
 Class này chứa tất cả những thứ trong Game
@@ -21,25 +20,23 @@ Các class khác chứa con trỏ đến class này để thao tác với các �
 class World
 {
 public:
-	Grid * grid;
 	Metroid * metroid;
-	Gate * gate;
+	Grid *grid;
 	Samus * samus;
 	MaruMari * maruMari;
-	Skree * skree;
-	Zoomer * zoomer_yellow;
-	Zoomer * zoomer_pink;
-	//Manager * bulletManager;
+	Energy * energy;
+	vector<Bullet*> samusBullet;
+	vector<Enemy*> enemy;
 	LPD3DXSPRITE spriteHandler;
-	vector<Zoomer*> zoomerYellow = vector<Zoomer*>(5);
-	vector<Zoomer*> zoomerPink = vector<Zoomer*>(5);
 
 	World();
-	World(LPD3DXSPRITE spriteHandler, Metroid * metroid);
+	World(LPD3DXSPRITE spriteHandler, Metroid * metroid, int width, int height);
 	~World();
 
 	void Update(float t);
 	void Render();
 	void InitSprites(LPDIRECT3DDEVICE9 d3ddv);
 
+	void loadEnemyPositions(string filePath);
+	vector<string> World::split(string s, string c);
 };

@@ -1,254 +1,198 @@
-#include "Grid.h"
-#include "Math.h"
+﻿#include "Grid.h"
+#include "Samus.h"
+// Lưu vào mảng 2 chiều
+// Height khi quy đổi ra sẽ là row -> pos_y tương ứng với row
+// Width khi quy đổi ra sẽ là column -> pos_x tương ứng column
 
-Grid::Grid()
-{
-	collide = new Collision();
-	//clear the grid
-	for (int i = 0; i < NUM_CELLS; i++)
+Grid::Grid() {
+	numOfRow = DEFINE_ROW;
+	numOfColumn = DEFINE_COLUMN;
+	for (int i = 0; i < numOfRow; i++)
 	{
-		for (int j = 0; j < NUM_CELLS; j++)
+		for (int j = 0; j < numOfColumn; j++)
 			cells[i][j] = NULL;
 	}
-
-	// Allocate all the cells
-	//const int BALLS_TO_RESERVE = 20;
-	//m_cells.resize(NUM_CELLS);
-	//for (int i = 0; i < m_cells.size(); i++) {
-	//	m_cells[i].objectList.reserve(BALLS_TO_RESERVE);
-	//}
+	this->deltaTime = 0.0f;
 }
 
-Grid::~Grid()
-{
+Grid::Grid(int height, int width) {
+	this->numOfRow = (int)ceil(height * BRICK_SIZE / CELL_SIZE);
+	this->numOfColumn = (int)ceil(width * BRICK_SIZE / CELL_SIZE);
+
+	for (int i = 0; i < numOfRow; i++)
+	{
+		for (int j = 0; j < numOfColumn; j++)
+			cells[i][j] = NULL;
+	}
+	this->deltaTime = 0.0f;
 }
 
-void Grid::addFollowing(GameObject * object)
-{
-	objectFollowing = object;
-
+Grid::~Grid() {
+	
 }
 
-void Grid::add(GameObject * object)
-{
-	//store the init position of object
-	object->lastPosX = object->pos_x;
-	object->lastPosY = object->pos_y;
+// Cái này là dùng danh sách liên kết đôi để lưu trữ và truy xuất object
+// Nếu mà mình xác định vị trí object thuộc cell nào rồi thì mình đưa nó vào đầu danh sách liên kết đôi đó
+// Ở đây 1 cell là 1 danh sách liên kết đôi
+// Giải thuật ở dưới là thêm vào đầu dslk đôi
+void Grid::add(GameObject* object) {
+	// Lưu trữ lại giá trị cũ của object sau mỗi lần update
+	object->setlastPosX(object->getPosX());
+	object->setlastPosY(object->getPosY());
 
-	//determine which grid cells it is in.
-	int cellX = (int)(object->pos_x / CELL_SIZE);
-	int cellY = (int)(object->pos_y / CELL_SIZE);
+	// Xác định object đang nằm ở grid nào
+	int column = floor(object->getPosX() / CELL_SIZE); // trừ đi 1 do mảng bắt đầu từ 0
+	int row = floor(object->getPosY() / CELL_SIZE);
 
-	//Add to the front of list for the cell it's in.
+
+	// Thêm object vào đầu của list
 	object->previousUnit = NULL;
-	object->nextUnit = cells[cellX][cellY];
-	cells[cellX][cellY] = object;
+	object->nextUnit = cells[row][column];
+	cells[row][column] = object;
 
-	if (object->nextUnit != NULL)
+	if (object->nextUnit != NULL) {
 		object->nextUnit->previousUnit = object;
+	}
 }
 
-//Cell* Grid::getCell(int x, int y) {
-//	if (x < 0) x = 0;
-//	if (x >= NUM_CELLS) x = NUM_CELLS - 1;
-//	if (y < 0) y = 0;
-//	if (y >= NUM_CELLS) y = NUM_CELLS - 1;
-//
-//	return &m_cells[y * NUM_CELLS + x];
-//}
+void Grid::resetGrid(int width, int height) {
+	this->numOfRow = (int)ceil(height * BRICK_SIZE / CELL_SIZE);
+	this->numOfColumn = (int)ceil(width * BRICK_SIZE / CELL_SIZE);
 
-//Cell* Grid::getCell(D3DXVECTOR2 pos) {
-//	int cellX = (int)(pos.x / CELL_SIZE);
-//	int cellY = (int)(pos.y / CELL_SIZE);
-//
-//	return getCell(cellX, cellY);
-//}
+	for (int i = 0; i < numOfRow; i++)
+	{
+		for (int j = 0; j < numOfColumn; j++)
+			cells[i][j] = NULL;
+	}
+	this->deltaTime = 0.0f;
+}
 
-//void Grid::handleCell(GameObject * object)
-//{
-//	GameObject * other;
-//	while (object != NULL)
-//	{
-//		other = object->nextUnit;
-//		while (other != NULL)
-//		{
-//			//if (object->pos_x == other->pos_x && object->pos_y == other->pos_y)
-//				//handleAttack(object, other);
-//			other = other->nextUnit;
-//		}
-//		object = object->nextUnit;
-//	}
-//
-//	other = nullptr;
-//	delete other;
-//}
+// Dùng để xét cái ô cell hiện tại, như là va chạm của object mình đang xét với các object còn lại
+// Kế bên đó là xét với các cell lân cận
+// Theo người ta nói các cell càn xét thêm là:
+//		1 ô trên,
+//		1 ô trái trên
+//		1 ô trái
+//		1 ô trái dưới
+// Ở đây ta cho vào vòng lặp là xét tất cả các object với nhau
+bool Grid::handleCell(GameObject* object, int row, int column) {
+	bool isCollision = false;
+	GameObject *cell = cells[row][column];
+	if (object != NULL) {
+		if ((object->getType() != BRICK || object->getType() != ITEM) && object->isActive != false) {
+			// Đầu tiên là xét trong chính cell của nó trước
+			if (this->handleObject(object, cell))
+				isCollision = true;
 
-void Grid::handleCell(int x, int y)
-{
+			// Còn đây là xét với các cell kế bên
+			if (row > 0 && column > 0)
+				if (this->handleObject(object, cells[row - 1][column - 1])) // trai tren
+					isCollision = true;
+			if (row > 0)
+				if (this->handleObject(object, cells[row - 1][column])) // phia tren
+					isCollision = true;
+			if (column > 0)
+				if (this->handleObject(object, cells[row][column - 1])) // phia trai
+					isCollision = true;
+			if (column > 0 && row < numOfRow - 1)
+				if (this->handleObject(object, cells[row - 1][column + 1])) // trai duoi
+					isCollision = true;
+		}
+	}
+	return isCollision;
+}
+
+// Dùng để xét giữa object đang xét với các object còn lại trong cell hoặc cell lân cận
+// Nếu mà khoảng cách giữa object đang xét với các object khác nhỏ hơn khoảng cách có thể va chạm
+// Lúc đó sẽ xét va chạm
+bool Grid::handleObject(GameObject *object, GameObject* otherObject) {
+	bool isCollision = false;
+	while (otherObject != NULL) {
+		if (object != otherObject) {
+			// Mình phải tính va chạm là từ khoảng cách giữa 2 điểm từ tâm của nó
+			int x1 = (int)((object->pos_x + object->width) / 2);
+			int y1 = (int)((object->pos_y + object->height) / 2);
+			D3DXVECTOR2 objectPos(x1, y1);
+
+			int x2 = (int)((otherObject->pos_x + otherObject->width) / 2);
+			int y2 = (int)((otherObject->pos_y + otherObject->height) / 2);
+			D3DXVECTOR2 otherPos(x2, y2);
+			if (Math::distance(objectPos, otherPos) < 50) {
+				if (handleCollision(object, otherObject))
+					isCollision = true;
+			}
+		}
+		otherObject = otherObject->nextUnit;
+	}
+	return isCollision;
+}
+
+// Xét va chạm và cập nhật tình trạng của 2 object
+bool Grid::handleCollision(GameObject *object, GameObject *otherObject) {
+	COLLISION_DIRECTION collisionDirection = NONE;
+	float collisionTime = object->sweptAABB(otherObject, collisionDirection, this->getDeltaTime());
 	
-	GameObject * object = cells[x][y];
-	if (object != NULL)
-		handleObject(objectFollowing, object);
-	while (object != NULL)
-	{
-		handleObject(object, object->nextUnit);
-
-		//try the neighboring cells
-		//if any object in the neighboring cells is close enough to the edge
-		//within the object to attack radius and we'll find the hit
-
-		//the inner loop starts after the current object 
-		//avoid comparing each pair of object compairing twice
-		if (x > 0 && y > 0)
-			handleObject(object, cells[x - 1][y - 1]);
-		if (x > 0)
-			handleObject(object, cells[x - 1][y]);
-		if (y > 0)
-			handleObject(object, cells[x][y - 1]);
-		if (x > 0 && y < NUM_CELLS - 1)
-			handleObject(object, cells[x - 1][y + 1]);
-
-		object = object->nextUnit;
-	}
-
-	object = nullptr;
-	delete object;
-}
-
-//Once all of the objects are nestled in their cells, we can let them start hacking at each other.
-void Grid::handleCollision(GameObject * object_a, GameObject * object_b)
-{
-	bool isCollide = false;
-	isCollide = collide->isInside(object_a->GetBound(), object_b->GetBound());
-	if (isCollide == true)
-	{
-		MessageBox(NULL, L"Collided !!", L"Information", MB_OK);
-	}
-}
-
-void Grid::handleObject(GameObject * object, GameObject * other)
-{
-	int attackDistance = 15;
-	while (other != NULL)
-	{
-		D3DXVECTOR2 objectPos(object->pos_x, object->pos_y);
-		D3DXVECTOR2 otherPos(other->pos_x, other->pos_y);
-		if (Math::distance(objectPos, otherPos) < attackDistance)
-			handleCollision(object, other);
-		other = other->nextUnit;
-	}
-}
-
-void Grid::UpdateCells(int x, int y, float delta)
-{
-	GameObject * object = cells[x][y];
-	while (object != nullptr)
-	{
-		object->Update(delta);
-
-		object = object->nextUnit;
-	}
-	object = nullptr;
-	delete object;	
-}
-
-void Grid::UpdateGrid(float delta)
-{
-	for (int y = 0; y < NUM_CELLS; y++)
-	{
-		for (int x = 0; x < NUM_CELLS; x++)
-		{
-			if (Math::abs(x, followCellX) <= 5)
-				if (Math::abs(y, followCellY) <= 5)
-					UpdateCells(x,y,delta);
+	if (collisionDirection != NONE) {
+		if (object->getType() == SAMUS) {
+			this->handleSamus(object, otherObject, collisionDirection, collisionTime);
 		}
+		return true;
+	}
+	else {
+		return false;
 	}
 }
 
-void Grid::RenderGrid()
-{
-	for (int y = 0; y < NUM_CELLS; y++)
-	{
-		for (int x = 0; x < NUM_CELLS; x++)
-		{
-			if (Math::abs(x, followCellX) <= 5)
-				if (Math::abs(y, followCellY) <= 5)
-					RenderCells(x, y);
-		}
-	}
-}
-
-void Grid::RenderCells(int x, int y)
-{
-	GameObject * object = cells[x][y];
-	while (object != nullptr) 
-	{
-		object->Render();
-		object = object->nextUnit;
-	}
-
-	object = nullptr;
-	delete object;
-}
-
-void Grid::handleGrid()
-{
-	for (int y = 0; y < NUM_CELLS; y++)
-	{
-		for (int x = 0; x < NUM_CELLS; x++)
-		{
-			if (Math::abs(x, followCellX) <= 3)
-				if (Math::abs(y, followCellY) <= 3)
-					handleCell(x, y);
+void Grid::handleSamus(GameObject* object, GameObject* otherObject, COLLISION_DIRECTION collisionDirection, float collisionTime) {
+	Samus* samus = dynamic_cast<Samus*>(object);
+	if (collisionDirection == LEFT) {
+		if (samus->vx < 0) {
+			samus->SetState(STAND_LEFT);
 		}
 	}
 
+	object->pos_x += object->vx * collisionTime*this->getDeltaTime();
+	object->pos_y += object->vy * collisionTime*this->getDeltaTime();
 }
 
-void Grid::CheckNewPos(int lastx, int lasty, int posx, int posy)
-{
-	//which cell the object was previously in
-	int oldCellX = lastx;
-	int oldCellY = lasty;
+bool Grid::updateGrid(GameObject* object, float newPosX, float newPosY) {
+	// Kiểm tra xem nó có thay đổi cell hay không
+	int oldRow = floor(object->getlastPosY() / CELL_SIZE);
+	int oldColumn = floor(object->getlastPosX() / CELL_SIZE);
 
-	//which cell the object is moving to
-	int cellX = posx;
-	int cellY = posy;
+	int newRow = floor(newPosY / CELL_SIZE);
+	int newColumn = floor(newPosX / CELL_SIZE);
 
-	//if object didn't change the cells at all, then finished.
-	if (oldCellX == cellX && oldCellY == cellY) return;
+	// Nếu không thay đổi cell thì thoát ra
+	if (oldRow == newRow && oldColumn == newColumn) {
+		return this->handleCell(object, oldRow, oldColumn);
+	}
 
-	// Unlink it from the list of its old cell.
-	if (objectFollowing->previousUnit != NULL)
-		objectFollowing->previousUnit->nextUnit = objectFollowing->nextUnit;
-	if (objectFollowing->nextUnit != NULL)
-		objectFollowing->nextUnit->previousUnit = objectFollowing->previousUnit;
+	// Xóa object ra khỏi cell hiện tại và cập nhật và cell mới
+	if (object->previousUnit != NULL)
+		object->previousUnit->nextUnit = object->nextUnit;
+	if (object->nextUnit != NULL)
+		object->nextUnit->previousUnit = object->previousUnit;
 
-	// If it's the head of a list, remove it.
-	if (cells[oldCellX][oldCellY] == objectFollowing)
-		cells[oldCellX][oldCellY] = objectFollowing->nextUnit;
+	// Nếu object đang là đứng đầu
+	if (cells[oldRow][oldColumn] == object)
+		cells[oldRow][oldColumn] = object->nextUnit;
 
-	// Add it back to the grid at its new cell.
-	add(objectFollowing);
+	bool isCollision = false;
+	isCollision = this->handleCell(object, oldRow, oldColumn);
+
+	this->add(object);
+
+	// Cập nhật lại vị trí last Post của object
+	object->setlastPosX(object->getPosX());
+	object->setlastPosY(object->getPosY());
+	return isCollision;
 }
 
-void Grid::Update(float delta)
-{
-	int lastFollowCellX = (int)(objectFollowing->lastPosX / CELL_SIZE);
-	int lastFollowCellY = (int)(objectFollowing->lastPosY / CELL_SIZE);
-
-	objectFollowing->Update(delta);	
-
-	followCellX = (int)(objectFollowing->pos_x / CELL_SIZE);
-	followCellY = (int)(objectFollowing->pos_y / CELL_SIZE);
-	
-	UpdateGrid(delta);
-	//CheckNewPos(lastFollowCellX, lastFollowCellY, followCellX, followCellY);
-	handleGrid();
+void Grid::setDeltaTime(float deltaTime) {
+	this->deltaTime = deltaTime;
 }
 
-void Grid::Render()
-{
-	objectFollowing->Render();
-	RenderGrid();
+float Grid::getDeltaTime() {
+	return this->deltaTime;
 }

@@ -1,31 +1,9 @@
 ﻿#pragma once
-#ifndef _SAMUS_H
-#define _SAMUS_H_
 #include "Sprite.h"
 #include "GameObject.h"
 #include "trace.h"
 #include "World.h"
 
-enum SAMUS_STATE {
-	STAND_LEFT,
-	STAND_RIGHT,
-	RUNNING_LEFT,
-	RUNNING_RIGHT,
-	STAND_SHOOT_UP_LEFT,
-	STAND_SHOOT_UP_RIGHT,
-	MORPH_LEFT,
-	MORPH_RIGHT,
-	RUN_SHOOTING_LEFT,
-	RUN_SHOOTING_RIGHT,
-	RUN_SHOOT_UP_LEFT,
-	RUN_SHOOT_UP_RIGHT,
-	JUMP_LEFT,
-	JUMP_RIGHT,
-	TRANSFORM_BALL_LEFT,
-	TRANSFORM_BALL_RIGHT,
-	JUMP_SHOOT_UP_LEFT,
-	JUMP_SHOOT_UP_RIGHT,
-};
 
 class Samus : public GameObject
 {
@@ -52,6 +30,7 @@ protected:
 	SAMUS_STATE state;	
 
 	int tempX;
+	bool isBall;
 public:
 	bool isJumping;	// Trạng thái đang nhảy của Samus
 	bool canMorph = true;
@@ -60,7 +39,7 @@ public:
 	float health;	// Máu của Samus
 	bool isDeath = false;	// Trạng thái chết của Samus
 	Samus();
-	Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid * grid);
+	Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid* grid);
 	~Samus();
 
 	void InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture);
@@ -75,14 +54,16 @@ public:
 	void ResetAllSprites();
 	bool GetStateActive();
 
+	void setIsBall(bool isBall);
+	bool getIsBall();
+
 	//================ OVERRIDE VIRTUAL METHOD ==================
-	void Reset(int  x, int y);
+	void Reset(float  x, float y);
 	void Update(float t);
 	void Render();
 	void Destroy();
 	//================= END OVERRIDE VIRTUAL METHOD =============
 
 };
-#endif // !_SAMUS_H
 
 

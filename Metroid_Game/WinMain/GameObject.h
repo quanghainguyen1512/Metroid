@@ -1,6 +1,4 @@
 ﻿#pragma once
-#ifndef _GAME_OBJECT_H_
-#define _GAME_OBJECT_H_
 
 #include <d3dx9.h>
 #include "Sprite.h"
@@ -9,10 +7,8 @@
 class GameObject
 {
 public:
-	friend class Grid;
-	World * manager;	// con trỏ đến world để thao tác với các object ở world khi cần thiết
 	Grid * grid;
-
+	World * manager;	// con trỏ đến world để thao tác với các object ở world khi cần thiết
 	int width;
 	int height;
 	float pos_x;		// x postition of object
@@ -24,7 +20,6 @@ public:
 	Sprite * currentSprite;
 	GameObject * previousUnit;
 	GameObject * nextUnit;
-
 	float vx;		// x velocity
 	float vy;		// y velocity
 
@@ -44,7 +39,7 @@ public:
 public:
 	GameObject();
 	~GameObject();
-
+	float sweptAABB(GameObject* object, COLLISION_DIRECTION& collisionDirection, float deltaTime);
 	//======================== GET - SET METHOD ================================
 	OBJECT_TYPE getType();
 	void setType(OBJECT_TYPE type);
@@ -81,6 +76,7 @@ public:
 	float getgravity();
 	void setgravity(float value);
 
+	void SetBound(int objWidth, int objHeight);
 	RECT GetBound();
 	//===============================END GET - SET METHOD============================
 
@@ -96,7 +92,6 @@ public:
 	virtual void Destroy();
 
 	// ============================== END VIRTUAL METHOD =============================
-
+	
 
 };
-#endif // !_GAME_OBJECT_

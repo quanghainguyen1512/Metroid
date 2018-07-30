@@ -46,23 +46,26 @@
     <Filter Include="Header Files\SoundLibrary">
       <UniqueIdentifier>{0a83b4c0-153c-4ebd-809f-24bd31f30fb6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Bullet">
-      <UniqueIdentifier>{07b05e28-7641-4146-97ef-a5d0613024f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Bullet">
-      <UniqueIdentifier>{ec0d378a-adfb-4b64-aa5e-9823168b5a4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Enemy">
-      <UniqueIdentifier>{52cca69b-d78b-40da-b48f-d0a36ece928e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Enemy">
-      <UniqueIdentifier>{ae267dcf-9b69-4441-82f8-30c4e505ccaf}</UniqueIdentifier>
+    <Filter Include="Resource Files\scene">
+      <UniqueIdentifier>{8c74e5bf-f862-4d4a-9c07-46156ee439e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Item">
-      <UniqueIdentifier>{681fa9e2-e42d-454f-abed-d8080526c49e}</UniqueIdentifier>
+      <UniqueIdentifier>{9db79bf7-c169-4cac-b68f-c68ea48ce7b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\sprites\item">
+      <UniqueIdentifier>{fb1abdc0-0e80-45e5-8574-a60b549521f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Enemy">
+      <UniqueIdentifier>{779cf9dd-5114-461b-90fb-89cd3f0aae96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Enemy">
+      <UniqueIdentifier>{b30fca7c-048a-4271-9914-f45089ec159b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\enemy">
+      <UniqueIdentifier>{fc10af0f-6843-41ef-a031-9203a5d2d817}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Item">
-      <UniqueIdentifier>{5b819743-aaf9-4fa9-8c14-b4f9cb835bc7}</UniqueIdentifier>
+      <UniqueIdentifier>{3a286a5a-2c87-4c65-ad2e-8e733602fe84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -118,27 +121,9 @@
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
-      <Filter>Source Files\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="BulletManager.cpp">
-      <Filter>Source Files\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Gate.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Grid.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="TileObject.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>Source Files\FrameWork</Filter>
+      <Filter>Source Files\Character</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Skree.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Zoomer.cpp">
@@ -148,6 +133,15 @@
       <Filter>Source Files\Item</Filter>
     </ClCompile>
     <ClCompile Include="MaruMari.cpp">
+      <Filter>Source Files\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="Energy.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
   </ItemGroup>
@@ -204,27 +198,9 @@
       <Filter>Header Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="Bullet.h">
-      <Filter>Header Files\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="BulletManager.h">
-      <Filter>Header Files\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Gate.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="Grid.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="TileObject.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Header Files\FrameWork</Filter>
+      <Filter>Header Files\Character</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Header Files\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Skree.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Zoomer.h">
@@ -234,6 +210,18 @@
       <Filter>Header Files\Item</Filter>
     </ClInclude>
     <ClInclude Include="MaruMari.h">
+      <Filter>Header Files\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="BombItem.h">
+      <Filter>Header Files\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Energy.h">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
   </ItemGroup>
@@ -247,8 +235,29 @@
     <Image Include="sprites\Player_32x16.png">
       <Filter>Resource Files\sprites</Filter>
     </Image>
-    <Image Include="sprites\bullet.png">
-      <Filter>Resource Files\sprites</Filter>
+    <Image Include="scene\intro_background.png">
+      <Filter>Resource Files\scene</Filter>
+    </Image>
+    <Image Include="scene\gameover_background.png">
+      <Filter>Resource Files\scene</Filter>
+    </Image>
+    <Image Include="scene\start_background.png">
+      <Filter>Resource Files\scene</Filter>
+    </Image>
+    <Image Include="sprites\item\bullet.png">
+      <Filter>Resource Files\sprites\item</Filter>
+    </Image>
+    <Image Include="sprites\item\bulletx2.png">
+      <Filter>Resource Files\sprites\item</Filter>
+    </Image>
+    <Image Include="enemy\explosion.png">
+      <Filter>Resource Files\enemy</Filter>
+    </Image>
+    <Image Include="enemy\metroid_enemies_sheet.png">
+      <Filter>Resource Files\enemy</Filter>
+    </Image>
+    <Image Include="sprites\item\items_sprite_sheet.png">
+      <Filter>Resource Files\sprites\item</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -309,8 +318,59 @@
     <Text Include="sprites\RUN_SHOOTUP_RIGHT.txt">
       <Filter>Resource Files\sprites</Filter>
     </Text>
-    <Text Include="sprites\BULLET.txt">
-      <Filter>Resource Files\sprites</Filter>
+    <Text Include="sprites\item\BULLET.txt">
+      <Filter>Resource Files\sprites\item</Filter>
+    </Text>
+    <Text Include="enemy\BEE_FLY.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\BIRD_FLY.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\BLOCK_LEFT.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\BLOCK_RIGHT.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ENEMY_DETROYED.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ZOOMER_PINK_BOTTOM.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ZOOMER_PINK_LEFT.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ZOOMER_PINK_RIGHT.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ZOOMER_PINK_TOP.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ZOOMER_YELLOW_BOTTOM.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ZOOMER_YELLOW_LEFT.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ZOOMER_YELLOW_RIGHT.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="enemy\ZOOMER_YELLOW_TOP.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="sprites\item\ITEM_ENERGY.txt">
+      <Filter>Resource Files\sprites\item</Filter>
+    </Text>
+    <Text Include="sprites\item\ITEM_MISSILE.txt">
+      <Filter>Resource Files\sprites\item</Filter>
+    </Text>
+    <Text Include="sprites\item\MARU_MARI.txt">
+      <Filter>Resource Files\sprites\item</Filter>
+    </Text>
+    <Text Include="enemy\Monster_Room1.txt">
+      <Filter>Resource Files\enemy</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>

@@ -1,12 +1,15 @@
 #pragma once
 #include "Item.h"
+#include "Sprite.h"
 #include "Define.h"
-class MaruMari : public Item
+
+class Energy : public Item
 {
-	Sprite * maruMari;
+private:
+	Sprite * energy;
 public:
-	MaruMari(LPD3DXSPRITE spriteHandler, World * manager);
-	~MaruMari();
+	Energy(LPD3DXSPRITE spriteHandler, World* world);
+	~Energy();
 	void InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture);
 	void Init(float posX, float posY);
 	void Update(float t);

@@ -1,13 +1,12 @@
 ﻿#include  "Item.h"
 #include "World.h"
 
-Item::Item(LPD3DXSPRITE sprietHandler, World * manager, Grid * grid)
+Item::Item(LPD3DXSPRITE sprietHandler, World * manager)
 {
 	this->type = ITEM;
 	this->spriteHandler = spriteHandler;
 	this->manager = manager;
 	this->time_survive = ITEM_TIME_SURVIVE;
-	this->grid = grid;
 
 	vx = 0;
 	vy = 0;
@@ -34,7 +33,7 @@ void Item::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
 void Item::Init(float posX, float posY)
 {}
 
-void Item::Update(int t)
+void Item::Update(float t)
 {
 	if (!isActive)
 		return;

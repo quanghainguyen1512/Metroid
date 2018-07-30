@@ -95,6 +95,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3dx9.lib;d3d9.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3dcompiler.lib;avrt.lib;winmm.lib;dinput8.lib;dxguid.lib;comctl32.lib;dxerr.lib;legacy_stdio_definitions.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -130,15 +131,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
-    <ClCompile Include="BulletManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="DXGraphics.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Energy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Gate.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -148,19 +148,17 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Metroid.cpp" />
     <ClCompile Include="Samus.cpp" />
-    <ClCompile Include="Skree.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TileObject.cpp" />
     <ClCompile Include="trace.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Zoomer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BombItem.h" />
     <ClInclude Include="Bullet.h" />
-    <ClInclude Include="BulletManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Define.h" />
@@ -169,8 +167,8 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Gate.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="Energy.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />
@@ -178,11 +176,9 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="Metroid.h" />
     <ClInclude Include="Samus.h" />
-    <ClInclude Include="Skree.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TileObject.h" />
     <ClInclude Include="trace.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="World.h" />
@@ -191,12 +187,36 @@
   <ItemGroup>
     <Image Include="brick_16x16.png" />
     <Image Include="brick_32x32.png" />
-    <Image Include="sprites\bullet.png" />
+    <Image Include="enemy\explosion.png" />
+    <Image Include="enemy\metroid_enemies_sheet.png" />
+    <Image Include="scene\gameover_background.png" />
+    <Image Include="scene\intro_background.png" />
+    <Image Include="scene\start_background.png" />
+    <Image Include="sprites\item\bullet.png" />
+    <Image Include="sprites\item\bulletx2.png" />
+    <Image Include="sprites\item\items_sprite_sheet.png" />
     <Image Include="sprites\Player_32x16.png" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="enemy\BEE_FLY.txt" />
+    <Text Include="enemy\BIRD_FLY.txt" />
+    <Text Include="enemy\BLOCK_LEFT.txt" />
+    <Text Include="enemy\BLOCK_RIGHT.txt" />
+    <Text Include="enemy\ENEMY_DETROYED.txt" />
+    <Text Include="enemy\Monster_Room1.txt" />
+    <Text Include="enemy\ZOOMER_PINK_BOTTOM.txt" />
+    <Text Include="enemy\ZOOMER_PINK_LEFT.txt" />
+    <Text Include="enemy\ZOOMER_PINK_RIGHT.txt" />
+    <Text Include="enemy\ZOOMER_PINK_TOP.txt" />
+    <Text Include="enemy\ZOOMER_YELLOW_BOTTOM.txt" />
+    <Text Include="enemy\ZOOMER_YELLOW_LEFT.txt" />
+    <Text Include="enemy\ZOOMER_YELLOW_RIGHT.txt" />
+    <Text Include="enemy\ZOOMER_YELLOW_TOP.txt" />
     <Text Include="field1.txt" />
-    <Text Include="sprites\BULLET.txt" />
+    <Text Include="sprites\item\BULLET.txt" />
+    <Text Include="sprites\item\ITEM_ENERGY.txt" />
+    <Text Include="sprites\item\ITEM_MISSILE.txt" />
+    <Text Include="sprites\item\MARU_MARI.txt" />
     <Text Include="sprites\JUMPSHOOT_LEFT.txt" />
     <Text Include="sprites\JUMPSHOOT_RIGHT.txt" />
     <Text Include="sprites\JUMP_LEFT.txt" />

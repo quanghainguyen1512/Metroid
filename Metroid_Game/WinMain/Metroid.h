@@ -7,8 +7,6 @@
 #include "Sprite.h"
 #include "Map.h"
 #include "World.h"
-#include "BulletManager.h"
-#include "Collision.h"
 
 class Metroid : public Game
 {
@@ -17,12 +15,11 @@ protected:
 	LPDIRECT3DSURFACE9 introscreen;
 	LPDIRECT3DSURFACE9 gameoverscreen;
 	LPD3DXSPRITE spriteHandler;
+	LPDIRECT3DTEXTURE9 _texture;
 	World * world;
-	//CSound * intro;
-	//CSound * appear;
-	//GameSound *sound;
-	Manager * manager;
-	Collision * collision;
+	/*CSound * intro;
+	CSound * appear;
+	GameSound *sound;*/
 private:
 	void _InitBackground();
 	void _InitSprites(LPDIRECT3DDEVICE9 d3ddv);
@@ -33,6 +30,7 @@ private:
 	DWORD tick_per_frame;
 
 	Map *map;
+	Texture texture;
 public:
 	Metroid(HINSTANCE hInstance, LPWSTR Name, int Mode, int IsFullScreen, int FrameRate);
 	~Metroid();

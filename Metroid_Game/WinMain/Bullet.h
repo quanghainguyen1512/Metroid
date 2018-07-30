@@ -2,32 +2,32 @@
 #include "GameObject.h"
 #include "Define.h"
 #include "Texture.h"
-
-enum BulletDirection
-{
-	SHOOT_UP,
-	SHOOT_LEFT,
-	SHOOT_RIGHT
-};
+#include "Metroid.h"
 
 class Bullet : public GameObject
 {
 private:
-	LPDIRECT3DDEVICE9 m_d3ddv;
-	Sprite *bullet;
-	Texture *texture;
-	BulletDirection bulletdir;
-	bool isRender;
-	LPDIRECT3DTEXTURE9 bulletTexture;
+	Sprite *bulletSprite;
+	Bullet_SAMUS_Direction direction;
+	Bullet_SAMUS_Direction tempDirection;
+	bool isRendered;
+	int count;
 public:
-	Bullet(LPD3DXSPRITE spriteHandler, float X = 0, float Y = 0, float VX = 0, float VY = 0);
+	void initBullet(float posX, float posY);
+	void Update(float t);
+	void Update(float t, float posX, float posY);
+	void Render();
+	void InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture);
+	void Reset(float posX, float posY);
+	Bullet();
+	Bullet(LPD3DXSPRITE spriteHandler);
 	~Bullet();
+	
 
-	void SetState(BulletDirection value);
-	BulletDirection GetState();
-
-	virtual void Render();
-	void CreateBullet();
-	void Update(float Delta);
-	bool isRendering();
+	void setDirection(Bullet_SAMUS_Direction direction);
+	Bullet_SAMUS_Direction getDirection();
+	void setIsRendered(bool isRendered);
+	bool getIsRendered();
+	void setCount(int count);
+	int getCount();
 };
