@@ -66,8 +66,7 @@ void Sprite::updateSprite() {
 */
 //draw 1 sprite
 void Sprite::drawSprite(int x, int y, int width, int height, D3DXVECTOR3 position) {
-	if (this->sprite == NULL || this->texture == NULL)
-		return;
+
 
 	RECT rect;
 	rect.left = x;
@@ -194,4 +193,14 @@ void Sprite::setHeight(int value)
 int Sprite::getHeight()
 {
 	return height;
+}
+
+int Sprite::GetIndex()
+{
+	return this->_Index;
+}
+
+int Sprite::GetCount()
+{
+	return count;
 }

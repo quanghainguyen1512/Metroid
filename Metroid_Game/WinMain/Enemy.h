@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "GameObject.h"
-//#include "BulletManager.h"
 #include <time.h>
 
 #define ANIMATE_ENEMY_RATE 7
@@ -9,19 +8,18 @@
 class Enemy : public GameObject
 {
 protected:
-	ENEMY_TYPE enemy_type;
-
+	LPDIRECT3DTEXTURE9 texture;
+	float initPosX;
+	float initPosY;
+	float isEnemyFreezed = false;
 public:
 	float time_freeze;	// thời gian dừng khi bị hit
-	float health;		// Máu của object
+	int health;		// Máu của object
 	float damage;		// Lượng sát thương gây ra của object
 	bool DeathByShoot;
 
 	bool isActive = false;
 	bool isDeath = false;
-
-	string direction = "";
-
 
 	Enemy();
 	Enemy(LPD3DXSPRITE spriteHandler, World * manager);
@@ -29,19 +27,31 @@ public:
 
 	virtual void InitPostition();
 	virtual void InitPostition(int x, int y);
-	virtual void InitSprites(LPDIRECT3DDEVICE9 d3ddv);
-
-	ENEMY_TYPE GetEnemyType();
-	void SetEnemyType(ENEMY_TYPE enemy_type);
-	void SetDirection(string _direction);
+	virtual void InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture);
 
 	//============== OVERRIDE VIRTUAL METHOD ===============
 	virtual void Render();
 	virtual void Update(float t);
 	virtual void setEnemyStatefromString(string _state);
 	virtual void startMoving();
+	virtual void setSamusLocation(int _posX, int _posY);
 	//============== END OVERRIDE VIRTUAL METHOD ============
 
 	bool isInsideMapBound(RECT cameraBound);
+
+	void setTexture(LPDIRECT3DTEXTURE9 texture);
+	LPDIRECT3DTEXTURE9 getTexture();
+
+	void setInitPosX(float x);
+	float getInitPosX();
+	void setInitPosY(float y);
+	float getInitPosY();
+
+	void setHealth(int value) { this->health = value; }
+	int getHealth() { return this->health; }
+
+	void setIsEnemyFreezed(bool value) { this->isEnemyFreezed = value; }
+	bool getIsEnemyFreezed() { return this->isEnemyFreezed; }
+
 };
 

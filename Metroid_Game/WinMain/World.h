@@ -8,7 +8,10 @@
 #include "Texture.h"
 #include "Grid.h"
 #include "Bullet.h"
-#include "Energy.h"
+#include "ExplodeEffect.h"
+#include "BombWeapon.h"
+#include "BulletSkree.h"
+#include "Skree.h"
 
 using namespace std;
 
@@ -24,10 +27,14 @@ public:
 	Grid *grid;
 	Samus * samus;
 	MaruMari * maruMari;
-	Energy * energy;
+	ExplodeEffect* explodeEffect;
+	BombWeapon* bombWeapon;
+
 	vector<Bullet*> samusBullet;
 	vector<Enemy*> enemy;
 	LPD3DXSPRITE spriteHandler;
+
+	vector<BulletSkree*> bulletSkree;
 
 	World();
 	World(LPD3DXSPRITE spriteHandler, Metroid * metroid, int width, int height);
@@ -39,4 +46,6 @@ public:
 
 	void loadEnemyPositions(string filePath);
 	vector<string> World::split(string s, string c);
+
+	void setDirectionForZoomer(Enemy*, string str);
 };

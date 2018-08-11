@@ -98,7 +98,7 @@ float GameObject::sweptAABB(GameObject* object, COLLISION_DIRECTION& collisionDi
 	// Chỗ này có một cái hơi fun đó là khi vy = 0 mà pos_y dù nó thấp hơn vật khác vẫn bị xét là va chạm với cạnh, tương tự với vx
 	else {
 		if (xEntry > yEntry) { // này là đã va chạm ở trục Y rồi
-			if (xInvEntry > 0.0f) {
+			if (xInvEntry >= 0.0f) {
 				if (this->pos_y + this->height <= object->pos_y || this->pos_y >= object->pos_y + object->height)
 					collisionDirection = NONE;
 				else
@@ -112,7 +112,7 @@ float GameObject::sweptAABB(GameObject* object, COLLISION_DIRECTION& collisionDi
 			}
 		}
 		else {			// Này là va chạm với trục X rồi nè
-			if (yInvEntry > 0.0f) {
+			if (yInvEntry >= 0.0f) {
 				if (this->pos_x + this->width <= object->pos_x || this->pos_x >= object->pos_x + object->width)
 					collisionDirection = NONE;
 				else
@@ -270,4 +270,24 @@ RECT GameObject::GetBound()
 	objBound.bottom = pos_y - rigidBody.y;
 
 	return objBound;
+}
+
+bool GameObject::getJump()
+{
+	return canJump;
+}
+
+void GameObject::setJump(bool value)
+{
+	canJump = value;
+}
+
+bool GameObject::getFall()
+{
+	return isFalling;
+}
+
+void GameObject::setFall(bool value)
+{
+	isFalling = value;
 }

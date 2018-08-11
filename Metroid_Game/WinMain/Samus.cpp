@@ -13,13 +13,18 @@ void Samus::Render()
 		D3DXVECTOR3 position;
 		position.x = pos_x;
 		position.y = pos_y;
-		if (this->state == STAND_SHOOT_UP_LEFT || this->state == STAND_SHOOT_UP_RIGHT || this->state == RUN_SHOOT_UP_LEFT || this->state == RUN_SHOOT_UP_RIGHT) {
+		// Chỉnh lại pos_y để khi bắn lên không bị hụt sprite xuống
+		if (this->state == STAND_SHOOT_UP_LEFT 
+			|| this->state == STAND_SHOOT_UP_RIGHT 
+			|| this->state == RUN_SHOOT_UP_LEFT 
+			|| this->state == RUN_SHOOT_UP_RIGHT) {
 			position.y -= 10;
+		}
+		else if (this->isBall) {
+			position.y += 5;
 		}
 
 		position.z = 0;
-
-		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND| D3DXSPRITE_OBJECTSPACE);
 
 		switch (state)
 		{
@@ -79,7 +84,6 @@ void Samus::Render()
 			break;
 		}
 
-		spriteHandler->End();
 	}	
 }
 
@@ -87,7 +91,7 @@ Samus::Samus()
 {
 	this->isActive = true;
 	this->isBall = false;
-
+	this->isMorphing = false;
 	this->setType(SAMUS);
 }
 
@@ -97,6 +101,54 @@ void Samus::Destroy()
 	this->isActive = false;
 
 	//--TO DO: Đưa Samus ra khỏi viewport
+}
+
+// Chieu dai va chieu rong cua bounding box
+void Samus::setDimension()
+{
+	switch (this->state) {
+	case STAND_LEFT: case STAND_RIGHT: case RUNNING_LEFT: case RUNNING_RIGHT: case STAND_SHOOT_UP_LEFT: case STAND_SHOOT_UP_RIGHT:
+	case RUN_SHOOTING_LEFT: case RUN_SHOOTING_RIGHT: case RUN_SHOOT_UP_LEFT: case RUN_SHOOT_UP_RIGHT: {
+		this->setWidth(32);
+		this->setHeight(64);
+		this->setIsBall(false);
+		break;
+	}
+	case MORPH_LEFT: case MORPH_RIGHT: {
+		this->setWidth(40);
+		this->setHeight(48.0f);
+		this->setIsBall(false);
+		break;
+	}
+	case JUMP_LEFT: case JUMP_RIGHT: case JUMP_SHOOT_UP_LEFT: case JUMP_SHOOT_UP_RIGHT: {
+		this->setWidth(32);
+		this->setHeight(50);
+		this->setIsBall(false);
+		break;
+	}
+	case TRANSFORM_BALL_LEFT: case TRANSFORM_BALL_RIGHT: {
+		this->setWidth(32);
+		this->setHeight(32);
+		this->setIsBall(true);
+		break;
+	}
+	}
+}
+
+void Samus::collideEnemy()
+{
+	isControlled = false;
+	collideDistanceY = this->pos_y - collideHeight;
+	if (getVelocityXLast() > 0) {
+		isCollideRight = true;
+		collideDistanceX = this->pos_x - collideHeight * 4;
+	}
+	else {
+		isCollideLeft = true;
+		collideDistanceX = this->pos_x + collideHeight * 4;
+	}
+	isJumping = true;
+	isFalling = false;
 }
 
 Samus::Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid* grid)
@@ -113,14 +165,19 @@ Samus::Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid* grid)
 	//Set type
 	this->type = SAMUS;
 
-	/*width = 40;
-	height = 50;*/
-
-	gravity = FALLDOWN_VELOCITY_DECREASE;
+	gravity = GRAVITY_VELOCITY;
 	this->isBall = false;
+	this->isMorphing = false;
+	this->isJumping = false;
+	this->canJump = false;
+	this->isOnGround = true;
+	this->isFalling = false;
 
 	this->height = 64;
 	this->width = 32;
+
+	this->startPosJump = 0.0f;
+	this->endPosJump = 0.0f;
 }
 
 Samus::~Samus()
@@ -173,13 +230,14 @@ void Samus::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
 void Samus::InitPostition()
 {
 	//--TO DO: This code will be edited soon
-	/*pos_x = 992;	
-	pos_y = 320;*/	
-	this->pos_x = 1140;
-	this->pos_y = 352;
+	pos_x = 992;	
+	pos_y = 320;	
+	/*this->pos_x = 1140;
+	this->pos_y = 352;*/
+	//pos_y = 200;
 	vx = 0;
 	vx_last = 1.0f;
-	vy = 0;
+	vy = GRAVITY_VELOCITY;
 
 	//Init state of samus
 	state = STAND_RIGHT;
@@ -230,7 +288,6 @@ bool Samus::GetStateActive()
 
 void Samus::Reset(float x, float y)
 {
-	//manager->maruMari->Init(704, 186);
 	// Cho samus active trở lại
 	this->isActive = true;
 
@@ -241,19 +298,224 @@ void Samus::Reset(float x, float y)
 
 bool Samus::isSamusDeath()
 {
-	if (isDeath == true)
-		return true;
+	return isDeath;
 }
 
 // Update samus status
 void Samus::Update(float t)
 {
-	float newPosX = pos_x + vx * t;
-	float newPosY = pos_y + vy * t;
-	//vy += gravity;
-	if (!this->grid->updateGrid(this, newPosX, newPosY)) {
-		pos_x = newPosX;
-		pos_y = newPosY;
+	isTop = false;
+	isBottom = false;
+	isRight = false;
+	isLeft = false;
+	isColisionHandled = false;
+
+	int row = (int)floor(this->pos_y / CELL_SIZE);
+	int column = (int)floor(this->pos_x / CELL_SIZE);
+
+	this->setDimension();
+
+	this->grid->handleCell(this, row, column);
+	this->grid->updateGrid(this, this->pos_x, this->pos_y);
+
+	//if (!isColisionHandled) {
+	//	
+	//	if (isTop == false && isBottom == false && isLeft == false && isRight == false) {
+	//		this->isJumping = true;
+	//		this->isOnGround = false;
+	//		if (!this->isMorphing) {
+	//			if (this->state == RUNNING_LEFT || this->state == STAND_LEFT || this->state == RUN_SHOOTING_LEFT || state == STAND_SHOOT_UP_LEFT) {
+	//				this->state = JUMP_LEFT;
+	//			}
+	//			else if (this->state == RUNNING_RIGHT || this->state == STAND_RIGHT || this->state == RUN_SHOOTING_RIGHT || state == STAND_SHOOT_UP_RIGHT) {
+	//				this->state = JUMP_RIGHT;
+	//			}
+	//			else if (this->state == STAND_SHOOT_UP_LEFT || this->state == RUN_SHOOT_UP_LEFT) {
+	//				this->state = JUMP_SHOOT_UP_LEFT;
+	//			}
+	//			else if (this->state == STAND_SHOOT_UP_RIGHT || this->state == RUN_SHOOT_UP_RIGHT) {
+	//				this->state = JUMP_SHOOT_UP_RIGHT;
+	//			}
+	//		}
+
+	//		this->endPosJump = this->pos_y;
+
+	//		if (vy < 0) {
+	//			if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
+	//				this->canJump = false;
+	//				this->vy = GRAVITY_VELOCITY;
+	//			}
+	//			else if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP - 50 && this->canJump && !this->isOnGround) {
+	//				if (vy < 0) {
+	//					this->vy = -100.0f;
+	//				}
+	//				else {
+	//					this->vy = 100.0f;
+	//				}
+	//			}
+	//			else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
+	//				
+	//				if (this->startPosJump - this->endPosJump < 32) {
+	//					this->vy = 50.0f;
+	//				}
+	//				else {
+	//					this->vy = -GRAVITY_VELOCITY;
+	//				}
+	//			}
+	//			else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
+	//				this->vy = GRAVITY_VELOCITY;
+	//			}
+	//		}
+	//		else {
+	//			if (!this->canJump && this->isOnGround) {
+	//				this->vy = GRAVITY_VELOCITY;
+	//			}
+	//		}
+	//		this->pos_x += vx * t;
+	//		this->pos_y += vy * t;
+	//	}
+	//	else if (isLeft && isBottom) {
+	//		this->pos_x += 1;
+	//		pos_y += 0;
+	//	}
+	//	else if (isRight && isBottom) {
+	//		this->pos_x -= 1;
+	//		pos_y += 0;
+	//	}
+	//	else if (isLeft && isTop) {
+	//		this->pos_x += 1;
+	//		this->canJump = false;
+	//		this->vy = GRAVITY_VELOCITY;
+	//		this->pos_y += vy * t;
+	//	}
+	//	else if (isRight && isTop) {
+	//		this->pos_x -= 1;
+	//		this->canJump = false;
+	//		this->vy = GRAVITY_VELOCITY;
+	//		this->pos_y += 10;
+	//	}
+	//	else if (isLeft) {
+	//		this->pos_x += 1;
+
+	//		if (this->isJumping) {
+	//			this->endPosJump = this->pos_y;
+	//			if (vy < 0) {
+	//				if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
+	//					this->canJump = false;
+	//					this->vy = GRAVITY_VELOCITY;
+	//				}
+	//				else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
+	//					this->vy = -GRAVITY_VELOCITY;
+	//				}
+	//				else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
+	//					this->vy = GRAVITY_VELOCITY;
+	//				}
+	//			}
+	//			else {
+	//				if (!this->canJump && this->isOnGround) {
+	//					this->vy = GRAVITY_VELOCITY;
+	//				}
+	//			}
+	//		}
+	//		this->pos_y += this->vy * t;
+	//	}
+	//	else if (isRight) {
+	//		this->pos_x -= 1;
+
+	//		if (this->isJumping) {
+	//			this->endPosJump = this->pos_y;
+	//			if (vy < 0) {
+	//				if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
+	//					this->canJump = false;
+	//					this->vy = GRAVITY_VELOCITY;
+	//				}
+	//				else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
+	//					this->vy = -GRAVITY_VELOCITY;
+	//				}
+	//				else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
+	//					this->vy = GRAVITY_VELOCITY;
+	//				}
+	//			}
+	//			else {
+	//				if (!this->canJump && this->isOnGround) {
+	//					this->vy = GRAVITY_VELOCITY;
+	//				}
+	//			}
+	//		}
+	//		this->pos_y += this->vy * t;
+	//	}
+	//	else if (isBottom) {
+	//		this->pos_x += vx * t;
+	//	}
+	//	else if (isTop) {
+	//		if (this->isJumping) {
+	//			this->canJump = false;
+	//			this->vy = GRAVITY_VELOCITY;
+	//			this->pos_y += 10;
+	//		}
+	//		this->pos_x += vx * t;
+	//	}
+	//}
+	//this->grid->updateGrid(this, this->pos_x, this->pos_y);
+
+	//dang bi va cham vang ra, ben phai va ben trai
+	if (isCollideRight) {
+		if (pos_x > collideDistanceX) {
+			vx = -SAMUS_SPEED;
+			if (isJumping == true && isFalling == false) {
+				if (pos_y > collideDistanceY) {
+					vy = -100;
+				}
+				else {
+					isJumping = false;
+					isFalling = true;
+				}
+			}
+			else if (isJumping == false && isFalling == true) {
+				if (pos_y < collideDistanceY + collideHeight) {
+					vy = 100;
+				}
+				else {
+
+				}
+			}
+		}
+		else {
+			vy = 0;
+			isJumping = false;
+			isFalling = false;
+			isControlled = true;
+			isCollideRight = false;
+		}
+	}
+	if (isCollideLeft) {
+		if (pos_x < collideDistanceX) {
+			vx = +SAMUS_SPEED;
+			if (isJumping == true && isFalling == false) {
+				if (pos_y > collideDistanceY) {
+					vy = -100;
+				}
+				else {
+					isJumping = false;
+					isFalling = true;
+				}
+			}
+			else if (isJumping == false && isFalling == true) {
+				if (pos_y < collideDistanceY + collideHeight) {
+					vy = 100;
+				}
+				else {
+
+				}
+			}
+		}
+		else {
+			vy = 0;
+			isJumping = false;
+			isFalling = false;
+			isControlled = true;
+			isCollideLeft = false;
+		}
 	}
 
 	// Animate samus if he is running

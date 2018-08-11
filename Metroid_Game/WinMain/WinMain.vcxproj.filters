@@ -67,6 +67,12 @@
     <Filter Include="Source Files\Item">
       <UniqueIdentifier>{3a286a5a-2c87-4c65-ad2e-8e733602fe84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Effect">
+      <UniqueIdentifier>{52fa9a98-7600-4a9c-82e3-266121ff0e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Effect">
+      <UniqueIdentifier>{176e7ab7-e272-4947-bcef-1bd2f6cbfd3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -120,6 +126,21 @@
     <ClCompile Include="Math.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="DXUT.cpp">
+      <Filter>Source Files\SoundLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUTenum.cpp">
+      <Filter>Source Files\SoundLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUTmisc.cpp">
+      <Filter>Source Files\SoundLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="SDKsound.cpp">
+      <Filter>Source Files\SoundLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="SDKwavefile.cpp">
+      <Filter>Source Files\SoundLibrary</Filter>
+    </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>Source Files\Character</Filter>
     </ClCompile>
@@ -141,8 +162,23 @@
     <ClCompile Include="Collision.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="Energy.cpp">
-      <Filter>Source Files\Item</Filter>
+    <ClCompile Include="Brick.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="BombWeapon.cpp">
+      <Filter>Source Files\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Source Files\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="ExplodeEffect.cpp">
+      <Filter>Source Files\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Skree.cpp">
+      <Filter>Source Files\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletSkree.cpp">
+      <Filter>Source Files\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +233,21 @@
     <ClInclude Include="Math.h">
       <Filter>Header Files\FrameWork</Filter>
     </ClInclude>
+    <ClInclude Include="DXUT.h">
+      <Filter>Header Files\SoundLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUTenum.h">
+      <Filter>Header Files\SoundLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUTmisc.h">
+      <Filter>Header Files\SoundLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="SDKsound.h">
+      <Filter>Header Files\SoundLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="SDKwavefile.h">
+      <Filter>Header Files\SoundLibrary</Filter>
+    </ClInclude>
     <ClInclude Include="Bullet.h">
       <Filter>Header Files\Character</Filter>
     </ClInclude>
@@ -218,11 +269,26 @@
     <ClInclude Include="Collision.h">
       <Filter>Header Files\FrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="BombItem.h">
-      <Filter>Header Files\Item</Filter>
+    <ClInclude Include="Brick.h">
+      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="Energy.h">
-      <Filter>Header Files\Item</Filter>
+    <ClInclude Include="BombWeapon.h">
+      <Filter>Header Files\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>Header Files\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="ExplodeEffect.h">
+      <Filter>Header Files\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Skree.h">
+      <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletSkree.h">
+      <Filter>Header Files\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -369,7 +435,10 @@
     <Text Include="sprites\item\MARU_MARI.txt">
       <Filter>Resource Files\sprites\item</Filter>
     </Text>
-    <Text Include="enemy\Monster_Room1.txt">
+    <Text Include="Monster_Room1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="enemy\SKREE.txt">
       <Filter>Resource Files\enemy</Filter>
     </Text>
   </ItemGroup>
@@ -419,5 +488,10 @@
     <Media Include="sound\background\samus_death.wav">
       <Filter>Resource Files\sound\background</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="WinMain.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

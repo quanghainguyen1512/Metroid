@@ -3,7 +3,6 @@
 class Item : public GameObject
 {
 protected:
-	ITEM_TYPE item_type;
 	float time_survive;
 	int number_gain;
 public:
@@ -15,7 +14,7 @@ public:
 	//============= OVERRIDE VIRTUAL METHOD =================
 	virtual void InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture);
 	virtual void Init(float posX, float posY);
-	virtual void Update(float t);
+	virtual void Update(int t);
 	virtual void Render();
 	//============= END OVERRIDE VIRTUAL METHOD =============
 };

@@ -1,4 +1,5 @@
 ﻿#include "Zoomer.h"
+#include "Skree.h"
 #include "World.h"
 
 Zoomer::Zoomer()
@@ -6,16 +7,23 @@ Zoomer::Zoomer()
 
 }
 
-Zoomer::Zoomer(LPD3DXSPRITE spriteHandler, World * manager, ENEMY_TYPE enemy_type) : Enemy(spriteHandler, manager)
+Zoomer::Zoomer(LPD3DXSPRITE spriteHandler, World * manager, OBJECT_TYPE enemy_type) : Enemy(spriteHandler, manager)
 {
-	this->setType(ENEMY);
-	this->enemy_type = enemy_type;
-	this->isActive = false;
+	this->setType(enemy_type);
+	this->setActive(false);
 
 	//Set vận tốc
-	gravity = FALLDOWN_VELOCITY_DECREASE;
-	vx = ZOOMER_SPEED;
-	vy = 0;
+	vx = 0.0f;
+	vy = 0.0f;
+	this->width = 30;
+	this->height = 30;
+
+	this->health = 100;
+
+	this->grid = manager->grid;
+
+	this->isDeath = false;
+	this->setIsEnemyFreezed(false);
 }
 
 
@@ -27,14 +35,14 @@ Zoomer::~Zoomer()
 	delete(right);
 }
 
-void Zoomer::InitSprites(LPDIRECT3DDEVICE9 d3ddv)
+void Zoomer::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
 {
 	LPWSTR top_path = NULL, bottom_path = NULL, left_path = NULL, right_path = NULL;
-	Texture texture2;
-	LPDIRECT3DTEXTURE9 texture = texture2.loadTexture(d3ddv, ENEMY_SPRITE_PATH);
 	if (texture == NULL)
 		trace(L"Unable to load zoomerTexture");
-	switch (enemy_type)
+	this->texture = texture;
+
+	switch (this->type)
 	{
 	case ZOOMER_YELLOW:
 		top_path = ZOOMER_YELLOW_TOP;
@@ -82,6 +90,8 @@ void Zoomer::setEnemyStatefromString(string _state) {
 	else if (_state == "ON_ZOOMER_BOTTOM") {
 		setState(ON_ZOOMER_BOTTOM);
 	}
+
+	this->setInitState(this->getState());
 }
 
 void Zoomer::setState(ZOOMER_STATE _state) {
@@ -93,269 +103,224 @@ ZOOMER_STATE Zoomer::getState() {
 	return state;
 }
 
+
+// Bắt đầu di chuyển khi camera đi tới
 void Zoomer::startMoving()
 {
-	if (direction == "RIGHT") {
-		setVelocityX(ZOOMER_SPEED);
-		setVelocityY(0);
-	}
-	else if (direction == "LEFT") {
-		setVelocityX(-ZOOMER_SPEED);
-		setVelocityY(0);
-	}
-	else if (direction == "UP") {
-		setVelocityY(-ZOOMER_SPEED);
-		setVelocityX(0);
-	}
-	else if (direction == "DOWN") {
-		setVelocityY(ZOOMER_SPEED);
-		setVelocityX(0);
+	
+}
+
+void Zoomer::startMovingBySamus(int _posX, int _posY)
+{
+}
+
+// Dùng để thiết lập vận tốc cho zoomer
+// Khi Zoomer đổi hướng cũng có nghĩa là nó cần 1 điểm tựa mới
+void Zoomer::setVelocity() {
+	switch (this->direction) {
+	case ZOOMER_RIGHT: {
+		this->setVelocityX(ZOOMER_SPEED);
+		if (this->state == ON_ZOOMER_UP) {
+			this->setVelocityY(ZOOMER_SPEED);
+		}
+		else if (this->state == ON_ZOOMER_BOTTOM) {
+			this->setVelocityY(-ZOOMER_SPEED);
+		}
+	}break;
+
+	case ZOOMER_LEFT: {
+		this->setVelocityX(-ZOOMER_SPEED);
+
+		if (this->state == ON_ZOOMER_UP) {
+			this->setVelocityY(ZOOMER_SPEED);
+		}
+		else if (this->state == ON_ZOOMER_BOTTOM) {
+			this->setVelocityY(-ZOOMER_SPEED);
+		}
+	}break;
+
+	case ZOOMER_DOWN: {
+		this->setVelocityY(ZOOMER_SPEED);
+		
+		if (this->state == ON_ZOOMER_LEFT) {
+			this->setVelocityX(ZOOMER_SPEED);
+		}
+		else if (this->state == ON_ZOOMER_RIGHT) {
+			this->setVelocityX(-ZOOMER_SPEED);
+		}
+	}break;
+
+	case ZOOMER_UP: {
+		this->setVelocityY(-ZOOMER_SPEED);
+
+		if (this->state == ON_ZOOMER_LEFT) {
+			this->setVelocityX(ZOOMER_SPEED);
+		}
+		else if (this->state == ON_ZOOMER_RIGHT) {
+			this->setVelocityX(-ZOOMER_SPEED);
+		}
+	}break;
 	}
 }
 
-
-//void Zoomer::InitSprites(LPDIRECT3DTEXTURE9 texture)
-//{
-//	LPWSTR top_path = NULL, bottom_path = NULL, left_path = NULL, right_path = NULL;
-//
-//	switch (enemy_type)
-//	{
-//	case ZOOMER_YELLOW:
-//		top_path = ZOOMER_YELLOW_TOP;
-//		bottom_path = ZOOMER_YELLOW_BOTTOM;
-//		left_path = ZOOMER_YELLOW_LEFT;
-//		right_path = ZOOMER_YELLOW_RIGHT;
-//
-//		//Khởi tạo máu
-//		//health = HEALTH_BEDGEHOG_YELLOW;
-//
-//		//Khởi tạo sát thương
-//		//damage = DAMAGE_BEDGEHOG;
-//		break;
-//	case ZOOMER_PINK:
-//		top_path = ZOOMER_PINK_UP;
-//		bottom_path = ZOOMER_PINK_BOTTOM;
-//		left_path = ZOOMER_PINK_LEFT;
-//		right_path = ZOOMER_PINK_RIGHT;
-//
-//		//Khởi tạo máu
-//		//health = HEALTH_ZOOMER_PINK;
-//
-//		//Khởi tạo sát thương
-//		//damage = DAMAGE_ZOOMER;
-//		break;
-//	}
-//
-//	//// Khởi tạo sprite
-//	top = new Sprite(spriteHandler, texture, top_path, ZOOMER_WIDTH, ZOOMER_HEIGHT, ZOOMER_SPRITE_COUNT);
-//	bottom = new Sprite(spriteHandler, texture, bottom_path, ZOOMER_WIDTH, ZOOMER_HEIGHT, ZOOMER_SPRITE_COUNT);
-//	left = new Sprite(spriteHandler, texture, left_path, ZOOMER_WIDTH, ZOOMER_HEIGHT, ZOOMER_SPRITE_COUNT);
-//	right = new Sprite(spriteHandler, texture, right_path, ZOOMER_WIDTH, ZOOMER_HEIGHT, ZOOMER_SPRITE_COUNT);
-//
-//}
-
-//void Zoomer::Update(float t)
-//{
-//	isCollision = false;
-//
-//	if (!isActive) return;
-//
-//	// Nếu không nằm trong Camera thì unactive
-//	if (!IsInCamera())
-//	{
-//		isActive = false;
-//		return;
-//	}
-//
-//	//if (onGround)
-//	//	vy -= FALLDOWN_VELOCITY_DECREASE;
-//	if (!isCollision)
-//		vy -= gravity;
-//
-//	// CODE NÀY DƠ, BỎ - QUAN
-//	//Kiểm tra va chạm với Samus
-//	//float clsTimeSamus = SweptAABB(manager->samus, t);
-//	//if (clsTimeSamus < 1.0f)
-//	//{
-//	//	if (normalx < -0.1f)
-//	//	{
-//	//		// this = target
-//	//		manager->samus->SetPosX((manager->samus->GetPosX() + manager->samus->GetCollider()->GetLeft() - this->GetCollider()->GetRight()) - 0.2f);
-//	//		//manager->samus->SetPosX(manager->samus->GetPosX() - manager->samus->GetVelocityX()*t);
-//	//	}
-//	//	else if (normalx > 0.1f)
-//	//	{
-//
-//	//	}
-//	//}
-//
-//	//Kiểm tra va chạm với ground
-//	
-//	for (int i = 0; i < manager->quadtreeGroup->size; i++)
-//	{
-//		switch (manager->quadtreeGroup->objects[i]->GetType())
-//		{
-//		case BRICK:
-//			float timeScale = SweptAABB(manager->quadtreeGroup->objects[i], t);
-//			if (timeScale < 1.0f)
-//			{
-//				isCollision = true;
-//				ResponseGround(manager->quadtreeGroup->objects[i], t, timeScale);
-//				
-//					//pos_x += vx * timeScale;
-//					//pos_y += vy * timeScale;
-//					//if (normaly > 0.1f)
-//					//{
-//					//	gravity = 0.03f;
-//					//	pos_y += 0.1f;
-//					//	vx = BEDGEHOG_SPEED;
-//					//	vy = 0.05f;
-//					//}
-//					//if (normalx < -0.1f)
-//					//{
-//					//	pos_x -= 0.1f;
-//					//	gravity = 0;
-//					//	vy = 0.07f;
-//					//	vx = BEDGEHOG_SPEED;
-//					//}
-//					///*if (normalx > 0.1f)
-//					//{
-//					//	pos_x += 0.1f;
-//					//	gravity = 0;
-//					//	vy = -0.07f;
-//					//	vx = -BEDGEHOG_SPEED;
-//					//}*/
-//					//if (normaly < -0.1f)
-//					//{
-//					//	gravity = -0.03f;
-//					//	pos_y -= 0.1f;
-//					//	vx = -BEDGEHOG_SPEED;
-//					//	vy = 0.05f;
-//					//}
-//
-//					//float magnitude = sqrt(vx*vx + vy*vy)*(1 - timeScale);
-//					//float dotprod = (vx*normaly + vy*normalx);
-//					//if (dotprod > 0.0f)
-//					//{
-//					//	dotprod = 1.0f;
-//					//}
-//					//else if (dotprod < 0.0f)
-//					//{
-//					//	dotprod = -1.0f;
-//					//}
-//					//vx = dotprod*normaly*magnitude;
-//					//vy = dotprod*normalx*magnitude;
-//			}
-//			break;
-//		}
-//	}
-//
-//	for (int i = 0; i < manager->colBrick->objects.size(); i++)
-//	{
-//		float timeScale = SweptAABB(manager->colBrick->objects[i], t);
-//		// Nếu có va chạm
-//		if (timeScale < 1.0f)
-//		{
-//			isCollision = true;
-//			ResponseGround(manager->colBrick->objects[i], t, timeScale);
-//		}
-//	}
-//
-//	if (!isCollision && gravity == 0)
-//	{
-//		if (last_normalx > 0.1f)
-//		{
-//			state = ON_ZOOMER_BOTTOM;
-//			vx = -BEDGEHOG_SPEED;
-//			vy = 0.01f;
-//		}
-//		else if (last_normalx < -0.1f)
-//		{
-//			state = ON_ZOOMER_UP;
-//			vx = BEDGEHOG_SPEED;
-//			vy = -0.01f;
-//		}
-//
-//		if (last_normaly > 0.1f)
-//		{
-//			state = ON_ZOOMER_RIGHT;
-//			vx = -0.01f;
-//			vy = -0.05f;
-//		}
-//		else if (last_normaly < -0.1f)
-//		{
-//			vx = 0.01f;
-//			vy = 0.05f;
-//			state = ON_ZOOMER_LEFT;
-//		}
-//	}
-//
-//	// Nếu frame này không va chạm
-//	/*if (!isCollision && gravity == 0 && (last_normalx !=0 || last_normaly != 0))
-//	{
-//		if (last_normalx > 0.1f)
-//		{
-//			state = ON_ZOOMER_BOTTOM;
-//			vx = -BEDGEHOG_SPEED;
-//			vy = 0.01f;
-//		}
-//		else if (last_normalx < -0.1f)
-//		{
-//			state = ON_ZOOMER_UP;
-//			vx = BEDGEHOG_SPEED;
-//			vy = -0.01f;
-//		}
-//
-//		if (last_normaly > 0.1f)
-//		{
-//			state = ON_ZOOMER_RIGHT;
-//			vx = -0.01f;
-//			vy = -0.05f;
-//		}
-//		else if (last_normaly < -0.1f)
-//		{
-//			vx = 0.15f;
-//			vy = 0.05f;
-//			state = ON_ZOOMER_LEFT;
-//		}
-//	}*/
-//
-//	pos_x += vx*t;
-//	pos_y += vy*t;
-//
-//	DWORD now = GetTickCount();
-//	if (now - last_time > 1000 / ANIMATE_RATE)
-//	{
-//		switch (state)
-//		{
-//		case ON_ZOOMER_UP:
-//			up->Next();
-//			break;
-//		case ON_ZOOMER_BOTTOM:
-//			bottom->Next();
-//			break;
-//		case ON_ZOOMER_LEFT:
-//			left->Next();
-//			break;
-//		case ON_ZOOMER_RIGHT:
-//			right->Next();
-//			break;
-//		}
-//		last_time = now;
-//	}
-//
-//	// --TO DO: Xử lý va chạm
-//	// ...
-//	// Khi cần xử lý va chạm, gọi groupCollision ở world
-//	//	
-//}
-
 void Zoomer::Update(float t)
 {
-	if (!isActive) return;
+	if (!this->isActive) return;
+	if (this->isEnemyFreezed) {
+		this->isEnemyFreezed = false;
+		return;
+	}
 
-	pos_x += vx * t;
-	pos_y += vy * t;
+	this->setIsTopCollided(false);
+	this->setIsBottomCollided(false);
+	this->setIsRightCollided(false);
+	this->setIsLeftCollided(false);
+	this->setIsCollisionHandled(false);
+
+	if (getHealth() > 30)
+		this->setVelocity();
+
+
+	GameObject* object = static_cast<GameObject*>(this);
+	object->isActive = true;
+
+	int row = (int)floor(this->pos_y / CELL_SIZE);
+	int column = (int)floor(this->pos_x / CELL_SIZE);
+
+	// Xet va cham va cap nhat vi tri
+	this->grid->handleCell(object, row, column);
+	if (!this->getIsCollisionHandled()) {
+		ZOOMER_STATE state = this->getState();
+		ZOOMER_DIRECTION direction = this->getDirection();
+
+		// Khi không va chạm gì hết sẽ bắt đầu chuyển hướng
+		if (!this->getIsTopCollided() && !this->getIsBottomCollided() 
+			&& !this->getIsLeftCollided() && !this->getIsRightCollided()) {
+
+			switch (state) {
+			case ON_ZOOMER_UP: {
+				if (direction == ZOOMER_RIGHT) {
+					this->setState(ON_ZOOMER_RIGHT);
+					this->pos_x = floor(this->pos_x / 32) * 32;			
+				}
+				else if (direction == ZOOMER_LEFT) {
+					this->setState(ON_ZOOMER_LEFT);
+					this->pos_x = floor(this->pos_x / 32) * 32 + 2;
+				}
+
+				this->setDirection(ZOOMER_DOWN);
+				this->pos_y += 10;
+
+				break;
+			}
+			case ON_ZOOMER_BOTTOM: {
+				this->pos_y -= 10;
+				this->setDirection(ZOOMER_UP);
+
+				if (direction == ZOOMER_RIGHT) {
+					this->setState(ON_ZOOMER_RIGHT);
+					this->pos_x = floor(this->pos_x / 32) * 32;
+				}
+				else if (direction == ZOOMER_LEFT) {
+					this->setState(ON_ZOOMER_LEFT);
+					this->pos_x = floor(this->pos_x / 32) * 32 + 2;
+				}
+				break;
+			}
+
+			case ON_ZOOMER_LEFT: {
+
+				this->setDirection(ZOOMER_RIGHT);
+				this->pos_x += 10;
+
+				if (direction == ZOOMER_UP) {
+					this->setState(ON_ZOOMER_UP);
+					this->pos_y = floor(this->pos_y / 32) * 32 + 2;
+				}
+				else if (direction == ZOOMER_DOWN) {
+					this->setState(ON_ZOOMER_BOTTOM);
+					this->pos_y = floor(this->pos_y / 32) * 32;
+				}
+
+				break;
+			}
+
+			case ON_ZOOMER_RIGHT: {
+				this->setDirection(ZOOMER_LEFT);
+				this->pos_x -= 10;
+
+				if (direction == ZOOMER_UP) {
+					this->setState(ON_ZOOMER_UP);
+					this->pos_y = floor(this->pos_y / 32) * 32 + 2;
+				}
+				else if (direction == ZOOMER_DOWN) {
+					this->setState(ON_ZOOMER_BOTTOM);
+					this->pos_y = floor(this->pos_y / 32) * 32;
+				}
+				break;
+			}
+			}
+			
+		}
+		
+		// Khi co 2 dieu kien va cham
+		else if (this->getIsLeftCollided() && this->getIsBottomCollided()) {
+			if (direction == ZOOMER_DOWN) {
+				this->setState(ON_ZOOMER_UP);
+				this->setDirection(ZOOMER_RIGHT);
+			}
+			else if (direction == ZOOMER_LEFT) {
+				this->setState(ON_ZOOMER_RIGHT);
+				this->setDirection(ZOOMER_UP);
+			}
+		}
+		else if (this->getIsTopCollided() && this->getIsLeftCollided()) {
+			if (direction == ZOOMER_LEFT) {
+				this->setDirection(ZOOMER_DOWN);
+				this->setState(ON_ZOOMER_RIGHT);
+			}
+			else if (direction == ZOOMER_UP) {
+				this->setState(ON_ZOOMER_BOTTOM);
+				this->setDirection(ZOOMER_RIGHT);
+			}
+		}
+		else if (this->getIsTopCollided() && this->getIsRightCollided()) {
+			if (direction == ZOOMER_RIGHT) {
+				this->setState(ON_ZOOMER_LEFT);
+				this->setDirection(ZOOMER_DOWN);
+			}
+			else if (direction == ZOOMER_UP) {
+				this->setState(ON_ZOOMER_BOTTOM);
+				this->setDirection(ZOOMER_LEFT);
+			}
+		}
+		else if (this->getIsRightCollided() && this->getIsBottomCollided()) {
+			if (direction == ZOOMER_RIGHT) {
+				this->setState(ON_ZOOMER_LEFT);
+				this->setDirection(ZOOMER_UP);
+			}
+			else if (direction == ZOOMER_DOWN) {
+				this->setState(ON_ZOOMER_UP);
+				this->setDirection(ZOOMER_LEFT);
+			}
+		}
+		else if (this->getIsTopCollided()) {
+			this->pos_x += vx * t;
+		}
+		else if (this->getIsBottomCollided()) {
+			pos_x += vx * t;
+		}
+		else if (this->getIsLeftCollided()) {
+			pos_y += vy * t;
+		}
+		else if (this->getIsRightCollided()) {
+			pos_y += vy * t;
+		}
+		
+	}
+	
+
+	this->grid->updateGrid(this, this->pos_x, this->pos_y);
 
 	DWORD now = GetTickCount();
 	if (now - last_time > 1000 / ANIMATE_ENEMY_RATE)
@@ -382,15 +347,16 @@ void Zoomer::Update(float t)
 
 void Zoomer::Render()
 {
+	if (!isActive)
+		return;
+
 	D3DXVECTOR3 position;
 	position.x = pos_x;
 	position.y = pos_y;
 	position.z = 0;
 
 	// Nếu không active thì không render
-	if (!isActive)
-		return;
-	spriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
+
 	switch (state)
 	{
 	case ON_ZOOMER_UP:
@@ -406,9 +372,88 @@ void Zoomer::Render()
 		right->drawSprite(right->getWidth(), right->getHeight(), position);
 		break;
 	}
-	spriteHandler->End();
 }
 
-void Zoomer::Destroy()
+void Zoomer::Destroy(float x, float y)
 {
+	if (this->health == 0)
+	{
+		manager->explodeEffect->setTimeSurvive(EFFECT_TIME_SURVIVE);
+		if (manager->explodeEffect->getTimeSurvive() > 0)
+		{
+			manager->explodeEffect->setActive(true);
+			manager->explodeEffect->setPosX(x - 32);
+			manager->explodeEffect->setPosY(y - 32);
+		}
+		this->isDeath = true;
+		this->isEnemyFreezed = false;
+
+		this->reset();
+		GameObject* object = static_cast<GameObject*>(this);
+		object->setActive(false);
+		this->manager->grid->updateGrid(object, this->getPosX(), this->getPosY());
+	}
+}
+
+void Zoomer::reset() {
+	this->pos_x = this->getInitPosX();
+	this->pos_y = this->getInitPosY();
+	this->direction = this->getInitDirection();
+	this->state = this->getInitState();
+}
+
+void Zoomer::setDirection(ZOOMER_DIRECTION direction) {
+	this->direction = direction;
+}
+
+ZOOMER_DIRECTION Zoomer::getDirection() {
+	return this->direction;
+}
+
+void Zoomer::setInitDirection(ZOOMER_DIRECTION direction) {
+	this->initDirection = direction;
+}
+
+ZOOMER_DIRECTION Zoomer::getInitDirection() {
+	return this->initDirection;
+}
+
+void Zoomer::setIsLeftCollided(bool isLeft) {
+	this->isLeftCollided = isLeft;
+}
+
+bool Zoomer::getIsLeftCollided() {
+	return this->isLeftCollided;
+}
+
+void Zoomer::setIsRightCollided(bool isRight) {
+	this->isRightCollided = isRight;
+}
+
+bool Zoomer::getIsRightCollided() {
+	return this->isRightCollided;
+}
+
+void Zoomer::setIsTopCollided(bool isTop) {
+	this->isTopCollided = isTop;
+}
+
+bool Zoomer::getIsTopCollided() {
+	return this->isTopCollided;
+}
+
+void Zoomer::setIsBottomCollided(bool isBottom) {
+	this->isBottomCollided = isBottom;
+}
+
+bool Zoomer::getIsBottomCollided() {
+	return this->isBottomCollided;
+}
+
+void Zoomer::setIsCollisionHandled(bool isHandled) {
+	this->isCollisionHandled = isHandled;
+}
+
+bool Zoomer::getIsCollisionHandled() {
+	return this->isCollisionHandled;
 }

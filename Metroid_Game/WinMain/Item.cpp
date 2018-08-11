@@ -33,7 +33,7 @@ void Item::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
 void Item::Init(float posX, float posY)
 {}
 
-void Item::Update(float t)
+void Item::Update(int t)
 {
 	if (!isActive)
 		return;
