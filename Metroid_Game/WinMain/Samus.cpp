@@ -318,145 +318,145 @@ void Samus::Update(float t)
 	this->grid->handleCell(this, row, column);
 	this->grid->updateGrid(this, this->pos_x, this->pos_y);
 
-	//if (!isColisionHandled) {
-	//	
-	//	if (isTop == false && isBottom == false && isLeft == false && isRight == false) {
-	//		this->isJumping = true;
-	//		this->isOnGround = false;
-	//		if (!this->isMorphing) {
-	//			if (this->state == RUNNING_LEFT || this->state == STAND_LEFT || this->state == RUN_SHOOTING_LEFT || state == STAND_SHOOT_UP_LEFT) {
-	//				this->state = JUMP_LEFT;
-	//			}
-	//			else if (this->state == RUNNING_RIGHT || this->state == STAND_RIGHT || this->state == RUN_SHOOTING_RIGHT || state == STAND_SHOOT_UP_RIGHT) {
-	//				this->state = JUMP_RIGHT;
-	//			}
-	//			else if (this->state == STAND_SHOOT_UP_LEFT || this->state == RUN_SHOOT_UP_LEFT) {
-	//				this->state = JUMP_SHOOT_UP_LEFT;
-	//			}
-	//			else if (this->state == STAND_SHOOT_UP_RIGHT || this->state == RUN_SHOOT_UP_RIGHT) {
-	//				this->state = JUMP_SHOOT_UP_RIGHT;
-	//			}
-	//		}
+	if (!isColisionHandled) {
+		
+		if (isTop == false && isBottom == false && isLeft == false && isRight == false) {
+			this->isJumping = true;
+			this->isOnGround = false;
+			if (!this->isMorphing) {
+				if (this->state == RUNNING_LEFT || this->state == STAND_LEFT || this->state == RUN_SHOOTING_LEFT || state == STAND_SHOOT_UP_LEFT) {
+					this->state = JUMP_LEFT;
+				}
+				else if (this->state == RUNNING_RIGHT || this->state == STAND_RIGHT || this->state == RUN_SHOOTING_RIGHT || state == STAND_SHOOT_UP_RIGHT) {
+					this->state = JUMP_RIGHT;
+				}
+				else if (this->state == STAND_SHOOT_UP_LEFT || this->state == RUN_SHOOT_UP_LEFT) {
+					this->state = JUMP_SHOOT_UP_LEFT;
+				}
+				else if (this->state == STAND_SHOOT_UP_RIGHT || this->state == RUN_SHOOT_UP_RIGHT) {
+					this->state = JUMP_SHOOT_UP_RIGHT;
+				}
+			}
 
-	//		this->endPosJump = this->pos_y;
+			this->endPosJump = this->pos_y;
 
-	//		if (vy < 0) {
-	//			if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
-	//				this->canJump = false;
-	//				this->vy = GRAVITY_VELOCITY;
-	//			}
-	//			else if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP - 50 && this->canJump && !this->isOnGround) {
-	//				if (vy < 0) {
-	//					this->vy = -100.0f;
-	//				}
-	//				else {
-	//					this->vy = 100.0f;
-	//				}
-	//			}
-	//			else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
-	//				
-	//				if (this->startPosJump - this->endPosJump < 32) {
-	//					this->vy = 50.0f;
-	//				}
-	//				else {
-	//					this->vy = -GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//			else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
-	//				this->vy = GRAVITY_VELOCITY;
-	//			}
-	//		}
-	//		else {
-	//			if (!this->canJump && this->isOnGround) {
-	//				this->vy = GRAVITY_VELOCITY;
-	//			}
-	//		}
-	//		this->pos_x += vx * t;
-	//		this->pos_y += vy * t;
-	//	}
-	//	else if (isLeft && isBottom) {
-	//		this->pos_x += 1;
-	//		pos_y += 0;
-	//	}
-	//	else if (isRight && isBottom) {
-	//		this->pos_x -= 1;
-	//		pos_y += 0;
-	//	}
-	//	else if (isLeft && isTop) {
-	//		this->pos_x += 1;
-	//		this->canJump = false;
-	//		this->vy = GRAVITY_VELOCITY;
-	//		this->pos_y += vy * t;
-	//	}
-	//	else if (isRight && isTop) {
-	//		this->pos_x -= 1;
-	//		this->canJump = false;
-	//		this->vy = GRAVITY_VELOCITY;
-	//		this->pos_y += 10;
-	//	}
-	//	else if (isLeft) {
-	//		this->pos_x += 1;
+			if (vy < 0) {
+				if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
+					this->canJump = false;
+					this->vy = GRAVITY_VELOCITY;
+				}
+				else if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP - 50 && this->canJump && !this->isOnGround) {
+					if (vy < 0) {
+						this->vy = -100.0f;
+					}
+					else {
+						this->vy = 100.0f;
+					}
+				}
+				else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
+					
+					if (this->startPosJump - this->endPosJump < 32) {
+						this->vy = 50.0f;
+					}
+					else {
+						this->vy = -GRAVITY_VELOCITY;
+					}
+				}
+				else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
+					this->vy = GRAVITY_VELOCITY;
+				}
+			}
+			else {
+				if (!this->canJump && this->isOnGround) {
+					this->vy = GRAVITY_VELOCITY;
+				}
+			}
+			this->pos_x += vx * t;
+			this->pos_y += vy * t;
+		}
+		else if (isLeft && isBottom) {
+			this->pos_x += 1;
+			pos_y += 0;
+		}
+		else if (isRight && isBottom) {
+			this->pos_x -= 1;
+			pos_y += 0;
+		}
+		else if (isLeft && isTop) {
+			this->pos_x += 1;
+			this->canJump = false;
+			this->vy = GRAVITY_VELOCITY;
+			this->pos_y += vy * t;
+		}
+		else if (isRight && isTop) {
+			this->pos_x -= 1;
+			this->canJump = false;
+			this->vy = GRAVITY_VELOCITY;
+			this->pos_y += 10;
+		}
+		else if (isLeft) {
+			this->pos_x += 1;
 
-	//		if (this->isJumping) {
-	//			this->endPosJump = this->pos_y;
-	//			if (vy < 0) {
-	//				if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
-	//					this->canJump = false;
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//				else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
-	//					this->vy = -GRAVITY_VELOCITY;
-	//				}
-	//				else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//			else {
-	//				if (!this->canJump && this->isOnGround) {
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//		}
-	//		this->pos_y += this->vy * t;
-	//	}
-	//	else if (isRight) {
-	//		this->pos_x -= 1;
+			if (this->isJumping) {
+				this->endPosJump = this->pos_y;
+				if (vy < 0) {
+					if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
+						this->canJump = false;
+						this->vy = GRAVITY_VELOCITY;
+					}
+					else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
+						this->vy = -GRAVITY_VELOCITY;
+					}
+					else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
+						this->vy = GRAVITY_VELOCITY;
+					}
+				}
+				else {
+					if (!this->canJump && this->isOnGround) {
+						this->vy = GRAVITY_VELOCITY;
+					}
+				}
+			}
+			this->pos_y += this->vy * t;
+		}
+		else if (isRight) {
+			this->pos_x -= 1;
 
-	//		if (this->isJumping) {
-	//			this->endPosJump = this->pos_y;
-	//			if (vy < 0) {
-	//				if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
-	//					this->canJump = false;
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//				else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
-	//					this->vy = -GRAVITY_VELOCITY;
-	//				}
-	//				else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//			else {
-	//				if (!this->canJump && this->isOnGround) {
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//		}
-	//		this->pos_y += this->vy * t;
-	//	}
-	//	else if (isBottom) {
-	//		this->pos_x += vx * t;
-	//	}
-	//	else if (isTop) {
-	//		if (this->isJumping) {
-	//			this->canJump = false;
-	//			this->vy = GRAVITY_VELOCITY;
-	//			this->pos_y += 10;
-	//		}
-	//		this->pos_x += vx * t;
-	//	}
-	//}
-	//this->grid->updateGrid(this, this->pos_x, this->pos_y);
+			if (this->isJumping) {
+				this->endPosJump = this->pos_y;
+				if (vy < 0) {
+					if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
+						this->canJump = false;
+						this->vy = GRAVITY_VELOCITY;
+					}
+					else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
+						this->vy = -GRAVITY_VELOCITY;
+					}
+					else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
+						this->vy = GRAVITY_VELOCITY;
+					}
+				}
+				else {
+					if (!this->canJump && this->isOnGround) {
+						this->vy = GRAVITY_VELOCITY;
+					}
+				}
+			}
+			this->pos_y += this->vy * t;
+		}
+		else if (isBottom) {
+			this->pos_x += vx * t;
+		}
+		else if (isTop) {
+			if (this->isJumping) {
+				this->canJump = false;
+				this->vy = GRAVITY_VELOCITY;
+				this->pos_y += 10;
+			}
+			this->pos_x += vx * t;
+		}
+	}
+	this->grid->updateGrid(this, this->pos_x, this->pos_y);
 
 	//dang bi va cham vang ra, ben phai va ben trai
 	if (isCollideRight) {

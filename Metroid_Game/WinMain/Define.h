@@ -90,7 +90,7 @@ enum OBJECT_TYPE
 {
 	SAMUS,
 	BRICK,
-	BULLET,
+	BULLET_SKREE,
 	ITEM,
 	GATE,
 	EFFECT,
@@ -106,7 +106,10 @@ enum OBJECT_TYPE
 	MISSILE_ITEM,
 	BOMB_ITEM,
 	BOMB_WEAPON,
-	BULLET_SKREE
+	BULLET_SKREE,
+	BULLET_KRAID,
+	BULLET_KRAID_MISSLE,
+	BULLET_RIDLEY
 };
 //================= END OBJECT TYPE ============
 
@@ -465,12 +468,16 @@ enum COLLISION_DIRECTION {
 
 #define SKREE_LIVE_TIME 50.0f
 
-enum Bullet_Skree_Direction {
+enum Bullet_Enemy_Direction {
 	BULLET_RIGHT,
 	BULLET_LEFT,
 	BULLET_TOPRIGHT,
 	BULLET_TOPLEFT
 };
 
+#define BULLET_SKREE_PATH L"enemy\\BULLET_SKREE.txt"
+
 //================== END SKREE =================
+
+#define ENEMY_BULLET_DISTANCE 100.0f
 

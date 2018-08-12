@@ -133,6 +133,9 @@
     <ClCompile Include="BombWeapon.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="BulletKraid.cpp" />
+    <ClCompile Include="BulletKraidMissle.cpp" />
+    <ClCompile Include="BulletRidley.cpp" />
     <ClCompile Include="BulletSkree.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -170,6 +173,9 @@
     <ClInclude Include="BombWeapon.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletKraid.h" />
+    <ClInclude Include="BulletKraidMissle.h" />
+    <ClInclude Include="BulletRidley.h" />
     <ClInclude Include="BulletSkree.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
@@ -218,6 +224,7 @@
     <Image Include="sprites\Player_32x16.png" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\..\..\..\BULLET_SKREE.txt" />
     <Text Include="enemy\BEE_FLY.txt" />
     <Text Include="enemy\BIRD_FLY.txt" />
     <Text Include="enemy\BLOCK_LEFT.txt" />

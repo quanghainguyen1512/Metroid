@@ -12,6 +12,9 @@
 #include "BombWeapon.h"
 #include "BulletSkree.h"
 #include "Skree.h"
+#include "BulletKraid.h"
+#include "BulletKraidMissle.h"
+#include "BulletRidley.h"
 
 using namespace std;
 
@@ -35,6 +38,10 @@ public:
 	LPD3DXSPRITE spriteHandler;
 
 	vector<BulletSkree*> bulletSkree;
+	vector<BulletKraidMissle*> bulletKraidMissle;
+	vector<BulletKraid*> bulletKraid;
+	vector<BulletRidley*> bulletRidley;
+
 
 	World();
 	World(LPD3DXSPRITE spriteHandler, Metroid * metroid, int width, int height);

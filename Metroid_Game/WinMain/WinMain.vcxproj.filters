@@ -180,6 +180,15 @@
     <ClCompile Include="BulletSkree.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="BulletRidley.cpp">
+      <Filter>Source Files\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletKraid.cpp">
+      <Filter>Source Files\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletKraidMissle.cpp">
+      <Filter>Source Files\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -288,6 +297,15 @@
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="BulletSkree.h">
+      <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletKraidMissle.h">
+      <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletKraid.h">
+      <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletRidley.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
@@ -439,6 +457,9 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="enemy\SKREE.txt">
+      <Filter>Resource Files\enemy</Filter>
+    </Text>
+    <Text Include="..\..\..\..\BULLET_SKREE.txt">
       <Filter>Resource Files\enemy</Filter>
     </Text>
   </ItemGroup>

@@ -5,7 +5,7 @@
 #include "Grid.h"
 
 
-class BulletSkree : public GameObject
+class BulletKraid : public GameObject
 {
 private:
 
@@ -14,28 +14,36 @@ private:
 	float startY;
 	float endX;
 	float endY;
-	float range;
+
 
 public:
 	Sprite * sprite;
 
-
-	void initBullet(float posX, float posY);
+	void initBullet(float _Kraid_posX, float _Kraid_posY, float _Samus_posX);
 	void Update(float t);
 	void Update(float t, float posX, float posY);
 	void Render();
 	void InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture);
 	void Reset(float posX, float posY);
-	BulletSkree();
-	BulletSkree(LPD3DXSPRITE spriteHandler, Grid* grid);
-	~BulletSkree();
+	BulletKraid();
+	BulletKraid(LPD3DXSPRITE spriteHandler, Grid* grid);
+	~BulletKraid();
 
 	void setIsRendered(bool isRendered);
 	bool getIsRendered();
 
 	Bullet_Enemy_Direction bulletDirection;
 
-	void setRange(float _range);
-	float getRange();
+	float Kraid_posX;
+	float Kraid_posY;
 
+	float Samus_posX;
+
+	bool isCollided;
+
+	bool isUp;
+	bool isDown;
+
+	float collideDistanceY;
+	float collideDistanceX;
 };

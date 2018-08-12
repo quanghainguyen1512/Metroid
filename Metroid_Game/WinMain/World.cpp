@@ -35,6 +35,28 @@ World::World(LPD3DXSPRITE spriteHandler, Metroid * metroid, int width, int heigh
 	this->bulletSkree.push_back(bulletSkree3);
 	this->bulletSkree.push_back(bulletSkree4);
 
+	BulletKraidMissle *bulletKraidMissle1 = new BulletKraidMissle(spriteHandler, grid);
+	BulletKraidMissle *bulletKraidMissle2 = new BulletKraidMissle(spriteHandler, grid);
+	BulletKraidMissle *bulletKraidMissle3 = new BulletKraidMissle(spriteHandler, grid);
+	this->bulletKraidMissle.push_back(bulletKraidMissle1);
+	this->bulletKraidMissle.push_back(bulletKraidMissle2);
+	this->bulletKraidMissle.push_back(bulletKraidMissle3);
+
+	BulletKraid *bulletKraid1 = new BulletKraid(spriteHandler, grid);
+	BulletKraid *bulletKraid2 = new BulletKraid(spriteHandler, grid);
+	BulletKraid *bulletKraid2 = new BulletKraid(spriteHandler, grid);
+	this->bulletKraid.push_back(bulletKraid1);
+	this->bulletKraid.push_back(bulletKraid2);
+
+	BulletRidley *bulletRidley1 = new BulletRidley(spriteHandler, grid);
+	BulletRidley *bulletRidley2 = new BulletRidley(spriteHandler, grid);
+	BulletRidley *bulletRidley3 = new BulletRidley(spriteHandler, grid);
+	BulletRidley *bulletRidley4 = new BulletRidley(spriteHandler, grid);
+	this->bulletRidley.push_back(bulletRidley2);
+	this->bulletRidley.push_back(bulletRidley4);
+	this->bulletRidley.push_back(bulletRidley3);
+	this->bulletRidley.push_back(bulletRidley4);
+
 	maruMari = new MaruMari(spriteHandler, this);
 
 	explodeEffect = new ExplodeEffect(spriteHandler, this, grid);
@@ -99,6 +121,41 @@ void World::Update(float t)
 			bulletSkree[i]->Update(t);
 		}
 	}
+
+	//if (this->Kraid->isActive) {
+		for (int i = 0; i < this->bulletKraidMissle.size(); i++) {
+			if (bulletKraidMissle[i]->isActive) {
+				bulletKraidMissle[i]->Update(t);
+			}
+			else {
+				//bulletKraidMissle[i]->initBullet(this->Kraid->pos_x, this->Kraid->pos_y, this->Samus->pos_x);
+			}
+		}
+
+
+		//for (int i = 0; i < this->bulletKraid.size(); i++) {
+		//	if (bulletKraid[i]->isActive) {
+		//		bulletKraid[i]->Update(t);
+		//	}
+		//else {
+		//	//bulletKraidMissle[i]->initBullet(this->Kraid->pos_x, this->Kraid->pos_y, this->Samus->pos_x);
+
+		//}
+		//}
+	//}
+
+
+		//if (this->bulletRidley->isActive) {
+			//for (int i = 0; i < this->bulletRidley.size(); i++) {
+			//	if (bulletRidley[i]->isActive) {
+			//		bulletRidley[i]->Update(t);
+			//	}
+		//else {
+		//	bulletRidley[i]->initBullet(this->Kraid->pos_x, this->Kraid->pos_y, this->Samus->pos_x);
+		//}
+			//}
+		//}
+
 }
 
 void World::Render()
@@ -125,6 +182,29 @@ void World::Render()
 			bulletSkree[i]->Render();
 		}
 	}
+
+	//if (this->Kraid->isActive) {
+	//for (int i = 0; i < this->bulletKraidMissle.size(); i++) {
+	//	if (bulletKraidMissle[i]->isActive) {
+	//		bulletKraidMissle[i]->Render();
+	//	}
+	//}
+
+	//for (int i = 0; i < this->bulletKraid.size(); i++) {
+	//	if (bulletKraid[i]->isActive) {
+	//		bulletKraid[i]->Render();
+	//	}
+	//}
+	//}
+
+
+	//if (this->Ridley->isActive) {
+		//for (int i = 0; i < this->bulletRidley.size(); i++) {
+		//	if (bulletRidley[i]->isActive) {
+		//		bulletRidley[i]->Render();
+		//	}
+		//}
+	//}
 }
 
 void World::InitSprites(LPDIRECT3DDEVICE9 d3ddv)
@@ -177,6 +257,18 @@ void World::InitSprites(LPDIRECT3DDEVICE9 d3ddv)
 		trace(L"Unable to load Bomb Texture");
 	for (int i = 0; i < this->bulletSkree.size(); i++) {
 		this->bulletSkree[i]->InitSprites(d3ddv, bulletSkreeTexture);
+	}
+
+	for (int i = 0; i < this->bulletKraidMissle.size(); i++) {
+		this->bulletKraidMissle[i]->InitSprites(d3ddv, bulletSkreeTexture);
+	}
+
+	for (int i = 0; i < this->bulletKraid.size(); i++) {
+		this->bulletKraid[i]->InitSprites(d3ddv, bulletSkreeTexture);
+	}
+
+	for (int i = 0; i < this->bulletRidley.size(); i++) {
+		this->bulletRidley[i]->InitSprites(d3ddv, bulletSkreeTexture);
 	}
 }
 
