@@ -1,8 +1,4 @@
 ﻿#include "Samus.h"
-#include "Game.h"
-#include <vector>
-#include "trace.h"
-#include "Metroid.h"
 
 void Samus::Render()
 {
@@ -111,44 +107,24 @@ void Samus::setDimension()
 	case RUN_SHOOTING_LEFT: case RUN_SHOOTING_RIGHT: case RUN_SHOOT_UP_LEFT: case RUN_SHOOT_UP_RIGHT: {
 		this->setWidth(32);
 		this->setHeight(64);
-		this->setIsBall(false);
 		break;
 	}
 	case MORPH_LEFT: case MORPH_RIGHT: {
 		this->setWidth(40);
 		this->setHeight(48.0f);
-		this->setIsBall(false);
 		break;
 	}
 	case JUMP_LEFT: case JUMP_RIGHT: case JUMP_SHOOT_UP_LEFT: case JUMP_SHOOT_UP_RIGHT: {
 		this->setWidth(32);
 		this->setHeight(50);
-		this->setIsBall(false);
 		break;
 	}
 	case TRANSFORM_BALL_LEFT: case TRANSFORM_BALL_RIGHT: {
 		this->setWidth(32);
 		this->setHeight(32);
-		this->setIsBall(true);
 		break;
 	}
 	}
-}
-
-void Samus::collideEnemy()
-{
-	isControlled = false;
-	collideDistanceY = this->pos_y - collideHeight;
-	if (getVelocityXLast() > 0) {
-		isCollideRight = true;
-		collideDistanceX = this->pos_x - collideHeight * 4;
-	}
-	else {
-		isCollideLeft = true;
-		collideDistanceX = this->pos_x + collideHeight * 4;
-	}
-	isJumping = true;
-	isFalling = false;
 }
 
 Samus::Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid* grid)
@@ -165,7 +141,7 @@ Samus::Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid* grid)
 	//Set type
 	this->type = SAMUS;
 
-	gravity = GRAVITY_VELOCITY;
+	gravity = FALLDOWN_VELOCITY_DECREASE;
 	this->isBall = false;
 	this->isMorphing = false;
 	this->isJumping = false;
@@ -178,6 +154,11 @@ Samus::Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid* grid)
 
 	this->startPosJump = 0.0f;
 	this->endPosJump = 0.0f;
+
+	setRoomNum(ROOM1);
+	this->isChangingRoom = false;
+	this->posX_EndChangingRoom = 0.0f;
+	this->posX_StartChangingRoom = 0.0f;
 }
 
 Samus::~Samus()
@@ -232,8 +213,8 @@ void Samus::InitPostition()
 	//--TO DO: This code will be edited soon
 	pos_x = 992;	
 	pos_y = 320;	
-	/*this->pos_x = 1140;
-	this->pos_y = 352;*/
+	//this->pos_x = 1140;
+	//this->pos_y = 352;
 	//pos_y = 200;
 	vx = 0;
 	vx_last = 1.0f;
@@ -304,217 +285,263 @@ bool Samus::isSamusDeath()
 // Update samus status
 void Samus::Update(float t)
 {
-	isTop = false;
-	isBottom = false;
-	isRight = false;
-	isLeft = false;
-	isColisionHandled = false;
+	this->currentTime = t;
 
-	int row = (int)floor(this->pos_y / CELL_SIZE);
-	int column = (int)floor(this->pos_x / CELL_SIZE);
+	int row = 0, column = 0;
 
-	this->setDimension();
-
-	this->grid->handleCell(this, row, column);
-	this->grid->updateGrid(this, this->pos_x, this->pos_y);
-
-	//if (!isColisionHandled) {
-	//	
-	//	if (isTop == false && isBottom == false && isLeft == false && isRight == false) {
-	//		this->isJumping = true;
-	//		this->isOnGround = false;
-	//		if (!this->isMorphing) {
-	//			if (this->state == RUNNING_LEFT || this->state == STAND_LEFT || this->state == RUN_SHOOTING_LEFT || state == STAND_SHOOT_UP_LEFT) {
-	//				this->state = JUMP_LEFT;
-	//			}
-	//			else if (this->state == RUNNING_RIGHT || this->state == STAND_RIGHT || this->state == RUN_SHOOTING_RIGHT || state == STAND_SHOOT_UP_RIGHT) {
-	//				this->state = JUMP_RIGHT;
-	//			}
-	//			else if (this->state == STAND_SHOOT_UP_LEFT || this->state == RUN_SHOOT_UP_LEFT) {
-	//				this->state = JUMP_SHOOT_UP_LEFT;
-	//			}
-	//			else if (this->state == STAND_SHOOT_UP_RIGHT || this->state == RUN_SHOOT_UP_RIGHT) {
-	//				this->state = JUMP_SHOOT_UP_RIGHT;
-	//			}
-	//		}
-
-	//		this->endPosJump = this->pos_y;
-
-	//		if (vy < 0) {
-	//			if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
-	//				this->canJump = false;
-	//				this->vy = GRAVITY_VELOCITY;
-	//			}
-	//			else if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP - 50 && this->canJump && !this->isOnGround) {
-	//				if (vy < 0) {
-	//					this->vy = -100.0f;
-	//				}
-	//				else {
-	//					this->vy = 100.0f;
-	//				}
-	//			}
-	//			else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
-	//				
-	//				if (this->startPosJump - this->endPosJump < 32) {
-	//					this->vy = 50.0f;
-	//				}
-	//				else {
-	//					this->vy = -GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//			else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
-	//				this->vy = GRAVITY_VELOCITY;
-	//			}
-	//		}
-	//		else {
-	//			if (!this->canJump && this->isOnGround) {
-	//				this->vy = GRAVITY_VELOCITY;
-	//			}
-	//		}
-	//		this->pos_x += vx * t;
-	//		this->pos_y += vy * t;
-	//	}
-	//	else if (isLeft && isBottom) {
-	//		this->pos_x += 1;
-	//		pos_y += 0;
-	//	}
-	//	else if (isRight && isBottom) {
-	//		this->pos_x -= 1;
-	//		pos_y += 0;
-	//	}
-	//	else if (isLeft && isTop) {
-	//		this->pos_x += 1;
-	//		this->canJump = false;
-	//		this->vy = GRAVITY_VELOCITY;
-	//		this->pos_y += vy * t;
-	//	}
-	//	else if (isRight && isTop) {
-	//		this->pos_x -= 1;
-	//		this->canJump = false;
-	//		this->vy = GRAVITY_VELOCITY;
-	//		this->pos_y += 10;
-	//	}
-	//	else if (isLeft) {
-	//		this->pos_x += 1;
-
-	//		if (this->isJumping) {
-	//			this->endPosJump = this->pos_y;
-	//			if (vy < 0) {
-	//				if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
-	//					this->canJump = false;
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//				else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
-	//					this->vy = -GRAVITY_VELOCITY;
-	//				}
-	//				else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//			else {
-	//				if (!this->canJump && this->isOnGround) {
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//		}
-	//		this->pos_y += this->vy * t;
-	//	}
-	//	else if (isRight) {
-	//		this->pos_x -= 1;
-
-	//		if (this->isJumping) {
-	//			this->endPosJump = this->pos_y;
-	//			if (vy < 0) {
-	//				if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
-	//					this->canJump = false;
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//				else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
-	//					this->vy = -GRAVITY_VELOCITY;
-	//				}
-	//				else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//			else {
-	//				if (!this->canJump && this->isOnGround) {
-	//					this->vy = GRAVITY_VELOCITY;
-	//				}
-	//			}
-	//		}
-	//		this->pos_y += this->vy * t;
-	//	}
-	//	else if (isBottom) {
-	//		this->pos_x += vx * t;
-	//	}
-	//	else if (isTop) {
-	//		if (this->isJumping) {
-	//			this->canJump = false;
-	//			this->vy = GRAVITY_VELOCITY;
-	//			this->pos_y += 10;
-	//		}
-	//		this->pos_x += vx * t;
-	//	}
-	//}
-	//this->grid->updateGrid(this, this->pos_x, this->pos_y);
-
-	//dang bi va cham vang ra, ben phai va ben trai
-	if (isCollideRight) {
-		if (pos_x > collideDistanceX) {
-			vx = -SAMUS_SPEED;
-			if (isJumping == true && isFalling == false) {
-				if (pos_y > collideDistanceY) {
-					vy = -100;
-				}
-				else {
-					isJumping = false;
-					isFalling = true;
-				}
-			}
-			else if (isJumping == false && isFalling == true) {
-				if (pos_y < collideDistanceY + collideHeight) {
-					vy = 100;
-				}
-				else {
-
-				}
-			}
+	// di chuyển camera từ room1 qua room2
+	if (WIDTH_ROOM1 >= this->pos_x 
+		&& WIDTH_ROOM1 <= this->pos_x + this->width) {
+		if (this->posX_StartChangingRoom == 0.0f) {
+			this->posX_StartChangingRoom = this->pos_x;
 		}
-		else {
-			vy = 0;
-			isJumping = false;
-			isFalling = false;
-			isControlled = true;
-			isCollideRight = false;
+		this->posX_EndChangingRoom = this->pos_x;
+		this->isChangingRoom = true;
+		setRoomNum(ROOM1);
+
+		if (fabs(this->posX_EndChangingRoom - this->posX_StartChangingRoom) <= 128) {
+			this->pos_x += this->vx * t;
+			//this->isActive = false;
 		}
 	}
-	if (isCollideLeft) {
-		if (pos_x < collideDistanceX) {
-			vx = +SAMUS_SPEED;
-			if (isJumping == true && isFalling == false) {
-				if (pos_y > collideDistanceY) {
-					vy = -100;
-				}
-				else {
-					isJumping = false;
-					isFalling = true;
-				}
-			}
-			else if (isJumping == false && isFalling == true) {
-				if (pos_y < collideDistanceY + collideHeight) {
-					vy = 100;
-				}
-				else {
+	if (this->pos_x >= WIDTH_ROOM1 - 10 && this->pos_x < WIDTH_ROOM1 + WIDTH_ROOM2)
+	{
+		isChangingRoom = false;
+		//this->isActive = true;
+	}
 
-				}
-			}
+	//di chuyển camera từ room2 qua room Boss đầu tiên
+	if (WIDTH_ROOM1 + WIDTH_ROOM2 >= this->pos_x
+		&& WIDTH_ROOM1 + WIDTH_ROOM2 <= this->pos_x + this->width) {
+		if (this->posX_StartChangingRoom == 0.0f) {
+			this->posX_StartChangingRoom = this->pos_x;
 		}
-		else {
-			vy = 0;
-			isJumping = false;
-			isFalling = false;
-			isControlled = true;
-			isCollideLeft = false;
+		this->posX_EndChangingRoom = this->pos_x;
+		this->isChangingRoom = true;
+		setRoomNum(ROOM2);
+
+		if (fabs(this->posX_EndChangingRoom - this->posX_StartChangingRoom) <= 128) {
+			this->pos_x += this->vx * t;
+		}
+	}
+	if (this->pos_x >= WIDTH_ROOM1 + WIDTH_ROOM2 + 32 
+		&& this->pos_x < WIDTH_ROOM1 + WIDTH_ROOM2 + WIDTH_ROOM_BOSS)
+	{
+		isChangingRoom = false;
+	}
+
+	//di chuyển camera từ room Boss đầu tiên qua room Boss thứ hai (end map)
+	if (WIDTH_ROOM1 + WIDTH_ROOM2 + WIDTH_ROOM_BOSS >= this->pos_x
+		&& WIDTH_ROOM1 + WIDTH_ROOM2 + WIDTH_ROOM_BOSS <= this->pos_x + this->width) {
+		if (this->posX_StartChangingRoom == 0.0f) {
+			this->posX_StartChangingRoom = this->pos_x;
+		}
+		this->posX_EndChangingRoom = this->pos_x;
+		this->isChangingRoom = true;
+		setRoomNum(BOSS1);
+
+		if (fabs(this->posX_EndChangingRoom - this->posX_StartChangingRoom) <= 128) {
+			this->pos_x += this->vx * t;
+		}
+	}
+	if (this->pos_x > WIDTH_ROOM1 + WIDTH_ROOM2 + WIDTH_ROOM_BOSS + 32
+		&& this->pos_x < WIDTH_ROOM1 + WIDTH_ROOM2 + 2 * WIDTH_ROOM_BOSS)
+	{
+		isChangingRoom = false;
+	}
+
+	if (isChangingRoom == false){
+		this->posX_StartChangingRoom = 0.0f;
+		this->posX_EndChangingRoom = 0.0f;
+		isTop = false;
+		isBottom = false;
+		isRight = false;
+		isLeft = false;
+		isColisionHandled = false;
+
+		float newPosX = pos_x + vx * t;
+		float newPosY = pos_y + vy * t;
+
+		row = (int)floor(this->pos_y / CELL_SIZE);
+		column = (int)floor(this->pos_x / CELL_SIZE);
+
+		this->setDimension();
+
+		this->grid->handleCell(this, row, column);
+
+		if (!isColisionHandled) {
+
+			if (isTop == false && isBottom == false && isLeft == false && isRight == false) {
+				this->isJumping = true;
+				this->isOnGround = false;
+				if (!this->isMorphing) {
+					if (this->state == RUNNING_LEFT || this->state == STAND_LEFT
+						|| this->state == RUN_SHOOTING_LEFT || state == STAND_SHOOT_UP_LEFT) {
+						this->state = JUMP_LEFT;
+						this->setWidth(32);
+						this->setHeight(50);
+					}
+					else if (this->state == RUNNING_RIGHT || this->state == STAND_RIGHT
+						|| this->state == RUN_SHOOTING_RIGHT || state == STAND_SHOOT_UP_RIGHT) {
+						this->state = JUMP_RIGHT;
+						this->setWidth(32);
+						this->setHeight(50);
+					}
+					else if (this->state == STAND_SHOOT_UP_LEFT || this->state == RUN_SHOOT_UP_LEFT) {
+						this->state = JUMP_SHOOT_UP_LEFT;
+						this->setWidth(32);
+						this->setHeight(50);
+					}
+					else if (this->state == STAND_SHOOT_UP_RIGHT || this->state == RUN_SHOOT_UP_RIGHT) {
+						this->state = JUMP_SHOOT_UP_RIGHT;
+						this->setWidth(32);
+						this->setHeight(50);
+					}
+				}
+
+				this->endPosJump = this->pos_y;
+
+				if (vy < 0) {
+					if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP
+						&& this->canJump && !this->isOnGround) {
+						this->canJump = false;
+						this->vy = GRAVITY_VELOCITY;
+					}
+					else if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP - 50
+						&& this->canJump && !this->isOnGround) {
+						if (vy < 0) {
+							this->vy = -80.0f;
+						}
+						else {
+							this->vy = 80.0f;
+						}
+					}
+					else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
+
+						if (this->startPosJump - this->endPosJump < 32) {
+							this->vy = 50.0f;
+						}
+						else {
+							this->vy = -GRAVITY_VELOCITY;
+						}
+					}
+					else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP
+						&& this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
+						this->vy = GRAVITY_VELOCITY;
+					}
+				}
+				else {
+					if (!this->canJump && this->isOnGround) {
+						this->vy = GRAVITY_VELOCITY;
+					}
+				}
+				//float temPosY = this->pos_y + this->vy*t;
+				this->pos_x += vx * t;
+				this->pos_y += vy * t;
+				/*	if (this->vy > 0) {
+				this->pos_y = temPosY;
+				}
+				else {
+				int row = (int)floor(temPosY / 32.0f);
+				int column1 = (int)floor(this->pos_x / 32.0f);
+				int column2 = (int)ceil(this->pos_x / 32.0f);
+				if (this->stringMapSamus[row][column1] == '0' && this->stringMapSamus[row][column2] == '0') {
+				this->pos_y = temPosY;
+				}
+				else {
+				if (temPosY < (row) * 32) {
+				this->pos_y = (row) * 32;
+				this->canJump = false;
+				this->vy = GRAVITY_VELOCITY;
+				}
+				}
+				}*/
+			}
+			else if (isLeft && isBottom) {
+				this->pos_x += 1;
+				pos_y += 0;
+			}
+			else if (isRight && isBottom) {
+				this->pos_x -= 1;
+				pos_y += 0;
+			}
+			else if (isLeft && isTop) {
+				this->pos_x += 1;
+				this->canJump = false;
+				this->vy = GRAVITY_VELOCITY;
+				this->pos_y += vy * t;
+			}
+			else if (isRight && isTop) {
+				this->pos_x -= 1;
+				this->canJump = false;
+				this->vy = GRAVITY_VELOCITY;
+				this->pos_y += 10;
+			}
+			else if (isLeft) {
+				this->pos_x += 1;
+
+				if (this->isJumping) {
+					this->endPosJump = this->pos_y;
+					if (vy < 0) {
+						if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP && this->canJump && !this->isOnGround) {
+							this->canJump = false;
+							this->vy = GRAVITY_VELOCITY;
+						}
+						else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP && !this->canJump) {
+							this->vy = -GRAVITY_VELOCITY;
+						}
+						else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP && this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP && !this->canJump) {
+							this->vy = GRAVITY_VELOCITY;
+						}
+					}
+					else {
+						if (!this->canJump && this->isOnGround) {
+							this->vy = GRAVITY_VELOCITY;
+						}
+					}
+				}
+				this->pos_y += this->vy * t;
+			}
+			else if (isRight) {
+				this->pos_x -= 1;
+
+				if (this->isJumping) {
+					this->endPosJump = this->pos_y;
+					if (vy < 0) {
+						if (this->startPosJump - this->endPosJump >= SAMUS_MAX_JUMP
+							&& this->canJump && !this->isOnGround) {
+							this->canJump = false;
+							this->vy = GRAVITY_VELOCITY;
+						}
+						else if (this->startPosJump - this->endPosJump < SAMUS_MIN_JUMP
+							&& !this->canJump) {
+							this->vy = -GRAVITY_VELOCITY;
+						}
+						else if (this->startPosJump - this->endPosJump >= SAMUS_MIN_JUMP
+							&& this->startPosJump - this->endPosJump <= SAMUS_MAX_JUMP
+							&& !this->canJump) {
+							this->vy = GRAVITY_VELOCITY;
+						}
+					}
+					else {
+						if (!this->canJump && this->isOnGround) {
+							this->vy = GRAVITY_VELOCITY;
+						}
+					}
+				}
+				this->pos_y += this->vy * t;
+			}
+			else if (isBottom) {
+				this->pos_x += vx * t;
+			}
+			else if (isTop) {
+				if (this->isJumping) {
+					this->canJump = false;
+					this->vy = GRAVITY_VELOCITY;
+					this->pos_y += 10;
+				}
+				this->pos_x += vx * t;
+			}
 		}
 	}
 

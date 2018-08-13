@@ -66,7 +66,8 @@ void Sprite::updateSprite() {
 */
 //draw 1 sprite
 void Sprite::drawSprite(int x, int y, int width, int height, D3DXVECTOR3 position) {
-
+	if (this->sprite == NULL || this->texture == NULL)
+		return;
 
 	RECT rect;
 	rect.left = x;

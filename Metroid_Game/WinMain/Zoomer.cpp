@@ -1,5 +1,4 @@
 ﻿#include "Zoomer.h"
-#include "Skree.h"
 #include "World.h"
 
 Zoomer::Zoomer()
@@ -10,7 +9,8 @@ Zoomer::Zoomer()
 Zoomer::Zoomer(LPD3DXSPRITE spriteHandler, World * manager, OBJECT_TYPE enemy_type) : Enemy(spriteHandler, manager)
 {
 	this->setType(enemy_type);
-	this->setActive(false);
+	this->isActive = false;
+	this->manager = manager;
 
 	//Set vận tốc
 	vx = 0.0f;
@@ -20,10 +20,7 @@ Zoomer::Zoomer(LPD3DXSPRITE spriteHandler, World * manager, OBJECT_TYPE enemy_ty
 
 	this->health = 100;
 
-	this->grid = manager->grid;
-
-	this->isDeath = false;
-	this->setIsEnemyFreezed(false);
+	this->grid = manager->getMetroid()->getGrid();
 }
 
 
@@ -90,8 +87,6 @@ void Zoomer::setEnemyStatefromString(string _state) {
 	else if (_state == "ON_ZOOMER_BOTTOM") {
 		setState(ON_ZOOMER_BOTTOM);
 	}
-
-	this->setInitState(this->getState());
 }
 
 void Zoomer::setState(ZOOMER_STATE _state) {
@@ -107,11 +102,10 @@ ZOOMER_STATE Zoomer::getState() {
 // Bắt đầu di chuyển khi camera đi tới
 void Zoomer::startMoving()
 {
-	
-}
-
-void Zoomer::startMovingBySamus(int _posX, int _posY)
-{
+	this->setPosX(this->getInitPosX());
+	this->setPosY(this->getInitPosY());
+	this->setDirection(this->getInitDirection());
+	this->isActive = true;
 }
 
 // Dùng để thiết lập vận tốc cho zoomer
@@ -166,11 +160,6 @@ void Zoomer::setVelocity() {
 void Zoomer::Update(float t)
 {
 	if (!this->isActive) return;
-	if (this->isEnemyFreezed) {
-		this->isEnemyFreezed = false;
-		return;
-	}
-
 	this->setIsTopCollided(false);
 	this->setIsBottomCollided(false);
 	this->setIsRightCollided(false);
@@ -179,7 +168,6 @@ void Zoomer::Update(float t)
 
 	if (getHealth() > 30)
 		this->setVelocity();
-
 
 	GameObject* object = static_cast<GameObject*>(this);
 	object->isActive = true;
@@ -194,14 +182,14 @@ void Zoomer::Update(float t)
 		ZOOMER_DIRECTION direction = this->getDirection();
 
 		// Khi không va chạm gì hết sẽ bắt đầu chuyển hướng
-		if (!this->getIsTopCollided() && !this->getIsBottomCollided() 
+		if (!this->getIsTopCollided() && !this->getIsBottomCollided()
 			&& !this->getIsLeftCollided() && !this->getIsRightCollided()) {
 
 			switch (state) {
 			case ON_ZOOMER_UP: {
 				if (direction == ZOOMER_RIGHT) {
 					this->setState(ON_ZOOMER_RIGHT);
-					this->pos_x = floor(this->pos_x / 32) * 32;			
+					this->pos_x = floor(this->pos_x / 32) * 32;
 				}
 				else if (direction == ZOOMER_LEFT) {
 					this->setState(ON_ZOOMER_LEFT);
@@ -260,9 +248,9 @@ void Zoomer::Update(float t)
 				break;
 			}
 			}
-			
+
 		}
-		
+
 		// Khi co 2 dieu kien va cham
 		else if (this->getIsLeftCollided() && this->getIsBottomCollided()) {
 			if (direction == ZOOMER_DOWN) {
@@ -316,9 +304,8 @@ void Zoomer::Update(float t)
 		else if (this->getIsRightCollided()) {
 			pos_y += vy * t;
 		}
-		
+
 	}
-	
 
 	this->grid->updateGrid(this, this->pos_x, this->pos_y);
 
@@ -342,21 +329,18 @@ void Zoomer::Update(float t)
 		}
 		last_time = now;
 	}
-
 }
 
 void Zoomer::Render()
 {
-	if (!isActive)
-		return;
-
 	D3DXVECTOR3 position;
 	position.x = pos_x;
 	position.y = pos_y;
 	position.z = 0;
 
 	// Nếu không active thì không render
-
+	if (!isActive)
+		return;
 	switch (state)
 	{
 	case ON_ZOOMER_UP:
@@ -384,22 +368,8 @@ void Zoomer::Destroy(float x, float y)
 			manager->explodeEffect->setActive(true);
 			manager->explodeEffect->setPosX(x - 32);
 			manager->explodeEffect->setPosY(y - 32);
-		}
-		this->isDeath = true;
-		this->isEnemyFreezed = false;
-
-		this->reset();
-		GameObject* object = static_cast<GameObject*>(this);
-		object->setActive(false);
-		this->manager->grid->updateGrid(object, this->getPosX(), this->getPosY());
+		}		
 	}
-}
-
-void Zoomer::reset() {
-	this->pos_x = this->getInitPosX();
-	this->pos_y = this->getInitPosY();
-	this->direction = this->getInitDirection();
-	this->state = this->getInitState();
 }
 
 void Zoomer::setDirection(ZOOMER_DIRECTION direction) {

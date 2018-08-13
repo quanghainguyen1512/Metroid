@@ -39,6 +39,21 @@ void GameObject::Destroy()
 {
 }
 
+ROOM_NUMBER GameObject::getRoomNum()
+{
+	return this->roomNum;
+}
+
+void GameObject::setRoomNum(ROOM_NUMBER value)
+{
+	roomNum = value;
+}
+
+Grid * GameObject::getGrid()
+{
+	return this->grid;
+}
+
 float GameObject::sweptAABB(GameObject* object, COLLISION_DIRECTION& collisionDirection, float deltaTime) {
 	float xInvEntry, yInvEntry;
 	float xInvExit, yInvExit;
@@ -254,6 +269,16 @@ float GameObject::getgravity()
 void GameObject::setgravity(float value)
 {
 	gravity = value;
+}
+
+void GameObject::setCurrentTime(float value)
+{
+	currentTime = value;
+}
+
+float GameObject::getCurrentTime()
+{
+	return this->currentTime;
 }
 
 void GameObject::SetBound(int objWidth, int objHeight)

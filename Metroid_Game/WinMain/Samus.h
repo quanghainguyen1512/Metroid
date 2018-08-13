@@ -29,12 +29,21 @@ protected:
 
 	SAMUS_STATE state;	
 
+	bool isInRoom1 = true;
+	bool isInRoom2 = false;
+	bool isInBoss1 = false;
+	bool isInBoss2 = false;
+
 	int tempX;
 	bool isBall;
+
 	float startPosJump;
 	float endPosJump;
 private:
 	vector<string> stringMapSamus;
+	bool isChangingRoom;
+	float posX_StartChangingRoom;
+	float posX_EndChangingRoom;
 public:
 	bool isJumping;	// Trạng thái đang nhảy của Samus
 	bool canMorph = true;
@@ -46,12 +55,6 @@ public:
 	bool isLeft = false;
 	bool isRight = false;
 	bool isColisionHandled = false;
-
-	bool isCollideLeft = false;
-	bool isCollideRight = false;
-	bool isControlled = true;
-	float collideDistanceX = 0;
-	float collideDistanceY = 0;
 
 	float health;	// Máu của Samus
 	bool isDeath = false;	// Trạng thái chết của Samus
@@ -90,7 +93,13 @@ public:
 	void setStringMap(vector<string> stringMap) { this->stringMapSamus = stringMap; }
 	vector<string> getStringMap() { return this->stringMapSamus; }
 
-	void collideEnemy();
+	void setIsChangingRoom(bool value) { this->isChangingRoom = value; }
+	bool getIsChangingRoom() { return this->isChangingRoom; }
+
+	void setPosX_StartChangingRoom(float value) { this->posX_StartChangingRoom = value; }
+	float getPosX_StartChangingRoom() { return this->posX_StartChangingRoom; }
+	void  setPosX_EndChangingRoom(float value) { this->posX_EndChangingRoom = value; }
+	float getPosX_EndChangingRoom() { return this->posX_EndChangingRoom; }
 };
 
 

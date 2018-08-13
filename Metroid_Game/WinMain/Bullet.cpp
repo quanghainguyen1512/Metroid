@@ -26,8 +26,8 @@ Bullet::Bullet(LPD3DXSPRITE spriteHandler, Grid*grid) {
 	this->endX = 0.0f;
 	this->endY = 0.0f;
 	this->grid->add(this);
-	this->width = 12;
-	this->height = 14;
+	this->width = WIDTH_BULLET;
+	this->height = HEIGHT_BULLET + 10;
 }
 
 Bullet::~Bullet() {
@@ -63,7 +63,6 @@ void Bullet::initBullet(float posX, float posY) {
 }
 
 void Bullet::Reset() {
-	this->initBullet(100.0f, 100.0f);
 	this->startX = 0.0f;
 	this->startY = 0.0f;
 	this->endX = 0.0f;
