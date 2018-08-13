@@ -8,8 +8,10 @@
 #include "Texture.h"
 #include "Grid.h"
 #include "Bullet.h"
-#include "Energy.h"
-
+#include "EnergyItem.h"
+#include "Skree.h"
+#include "MissileItem.h"
+#include "BombItem.h"
 using namespace std;
 
 /*
@@ -24,7 +26,9 @@ public:
 	Grid *grid;
 	Samus * samus;
 	MaruMari * maruMari;
-	Energy * energy;
+	EnergyItem * energy;
+	MissileItem * missile;
+	BombItem * bomb;
 	vector<Bullet*> samusBullet;
 	vector<Enemy*> enemy;
 	LPD3DXSPRITE spriteHandler;
@@ -39,4 +43,6 @@ public:
 
 	void loadEnemyPositions(string filePath);
 	vector<string> World::split(string s, string c);
+
+	void setDirectionForZoomer(Enemy*, string str);
 };

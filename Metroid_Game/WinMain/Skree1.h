@@ -8,17 +8,15 @@ enum SKREE_STATE
 {
 	ON_HANGING,
 	ON_FALLING,
-	LANDED,
-	SHOT,
-	EXPLOSION_STATE,
-	KILLED
+	LANDED, 
+	SHOT
 };
 
 class Skree : public Enemy
 {
 protected:
 	Sprite * skree;
-	Sprite * explosion;
+
 	int animate_rate;	// cần biến này vì khi dí theo Samus animate rate thay đổi
 public:
 	Skree();
@@ -32,9 +30,6 @@ public:
 
 	int samus_PosX = 0;
 	int samus_PosY = 0;
-
-	float range;
-	float liveTime = 0;
 
 	vector<Bullet*> skreeBullet;
 

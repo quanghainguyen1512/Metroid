@@ -3,20 +3,20 @@
 
 MaruMari::MaruMari(LPD3DXSPRITE spriteHandler, World * manager) :Item(spriteHandler, manager)
 {
-	this->setType(ITEM);
-	item_type = MARU_MARI;
-	maruMari = NULL;
-	isActive = true;
+	//this->setType(MARU_MARI);
+	//this->type = MARU_MARI;
+	//item = NULL;
+	//isActive = true;
 
-	this->previousUnit = NULL;
-	this->nextUnit = NULL;
+	//this->previousUnit = NULL;
+	//this->nextUnit = NULL;
 	this->width = 32;
 	this->height = 32;
 }
 
 MaruMari::~MaruMari()
 {
-	delete(maruMari);
+	delete(item);
 }
 
 void MaruMari::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
@@ -25,16 +25,16 @@ void MaruMari::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
 	//Create sprite handler
 	HRESULT result = D3DXCreateSprite(d3ddv, &spriteHandler);
 	if (result != D3D_OK) return;
-	maruMari = new Sprite(spriteHandler, texture, MARU_MARI_PATH, MARU_MARI_WIDTH, MARU_MARI_HEIGHT, MARU_MARI_COUNT);
+	item = new Sprite(spriteHandler, texture, MARU_MARI_PATH, MARU_MARI_WIDTH, MARU_MARI_HEIGHT, MARU_MARI_COUNT);
 }
 
-void MaruMari::Init(float posX, float posY)
-{
-	this->pos_x = posX;
-	this->pos_y = posY;
-	this->isActive = true;
-	time_survive = ITEM_TIME_SURVIVE;
-}
+//void MaruMari::Init(float posX, float posY)
+//{
+//	this->pos_x = posX;
+//	this->pos_y = posY;
+//	this->isActive = true;
+//	time_survive = ITEM_TIME_SURVIVE;
+//}
 
 void MaruMari::Update(float t)
 {
@@ -42,7 +42,7 @@ void MaruMari::Update(float t)
 	DWORD now = GetTickCount();
 	if (now - last_time > 1000 / ANIMATE_RATE)
 	{
-		maruMari->updateSprite();
+		item->updateSprite();
 		last_time = now;
 	}
 
@@ -77,24 +77,25 @@ void MaruMari::Update(float t)
 	// xxx
 }
 
-void MaruMari::Render()
+//void MaruMari::Render()
+//{
+//	D3DXVECTOR3 position;
+//	position.x = pos_x;
+//	position.y = pos_y;
+//	position.z = 0;
+//
+//	if (!isActive)
+//		return;
+//
+//	spriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
+//	item->drawSprite(item->getWidth(), item->getHeight(), position);
+//	spriteHandler->End();
+//}
+
+void MaruMari::touchedBySamus(Samus * samus)
 {
-	D3DXVECTOR3 position;
-	position.x = pos_x;
-	position.y = pos_y;
-	position.z = 0;
-
-	if (!isActive)
-		return;
-
-	spriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
-	maruMari->drawSprite(maruMari->getWidth(), maruMari->getHeight(), position);
-	spriteHandler->End();
-}
-
-void MaruMari::Destroy()
-{
-	isActive = false;
+	samus->setCanMorph(true);
+	this->Destroy();
 }
 
 

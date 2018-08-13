@@ -28,6 +28,8 @@ class GameObject;
 #define FRICTION 1.0f
 #define TEXTURE_GAME_CHARACTERS L"sprites\\Player_32x16.png"
 
+#define collideHeight 64
+
 //================ SCREEN RESOLUTION ================
 #define GAME_SCREEN_RESOLUTION_640_480_24   0
 #define GAME_SCREEN_RESOLUTION_800_600_24   1
@@ -63,6 +65,8 @@ enum SAMUS_STATE {
 	TRANSFORM_BALL_RIGHT,
 	JUMP_SHOOT_UP_LEFT,
 	JUMP_SHOOT_UP_RIGHT,
+	COLLIDE_RIGHT,
+	COLLIDE_LEFT
 };
 
 //================END SAMUS ====================
@@ -70,13 +74,30 @@ enum SAMUS_STATE {
 //================= OBJECT TYPE ================
 enum OBJECT_TYPE
 {
-	SAMUS = 0,
-	ENEMY = 1,
-	BRICK = 2,
-	BULLET = 3,
-	ITEM = 4
+	SAMUS,
+	BRICK,
+	BULLET,
+	ITEM,
+	GATE,
+	EFFECT,
+	ZOOMER_YELLOW,
+	ZOOMER_PINK,
+	SKREE,
+	GATE_BLOCK,
+	RIDLEY,
+	MOTHER_BRAIN,
+	EXPLOSION,
+	MARU_MARI,
+	ENERGY_ITEM,
+	MISSILE_ITEM,
+	BOMB_ITEM,
+	BOMB_WEAPON
 };
 //================= END OBJECT TYPE ============
+
+//================= ITEM TYPE =================
+
+//
 
 //================= GAME SCENE ================
 #define STARTSCREEN_FILE L"scene\\start_background.png"
@@ -192,13 +213,6 @@ enum OBJECT_TYPE
 
 //================ GAME ITEM ===========================
 
-enum ITEM_TYPE
-{
-	MARU_MARI,
-	ENERGY_ITEM,
-	MISSILE_ITEM
-};
-
 #define ITEM_TIME_SURVIVE 5000
 #define ITEM_SPRITE_PATH L"sprites\\item\\items_sprite_sheet.png"
 
@@ -206,7 +220,7 @@ enum ITEM_TYPE
 #define MARU_MARI_WIDTH 24
 #define MARU_MARI_HEIGHT 26
 #define MARU_MARI_PATH L"sprites\\item\\MARU_MARI.txt"
-#define MARU_MARI_COUNT 1
+#define MARU_MARI_COUNT 2
 
 //========= ITEM ENERGY
 #define ITEM_ENERGY_WIDTH 16
@@ -220,31 +234,50 @@ enum ITEM_TYPE
 #define ITEM_MISSILE_WIDTH 16
 #define ITEM_MISSILE_HEIGHT 24
 #define ITEM_MISSILE L"sprites\\item\\ITEM_MISSILE.txt"
-#define ITEM_MISSILE_COUNT 1
+#define ITEM_MISSILE_COUNT 2
 
 #define ITEM_MISSILE_GAIN 3
+//========= ITEM BOMB
+#define ITEM_BOMB_WIDTH 27
+#define ITEM_BOMB_HEIGHT 31
+#define ITEM_BOMB_PATH L"sprites\\item\\ITEM_BOMB.txt"
+#define ITEM_BOMB_COUNT 1
 //================ END GAME ITEM ===================================
 
 //================= ENEMY TYPE =================
 enum ENEMY_TYPE
 {
-	ZOOMER_YELLOW = 0,
+	/*ZOOMER_YELLOW = 0,
 	ZOOMER_PINK = 1,
 	BIRD = 2,
 	BLOCK = 3,
 	BEE = 4,
 	RIDLEY = 5,
-	MOTHER_BRAIN = 6,
+	MOTHER_BRAIN = 6,*/
 };
 //================= END ENEMY TYPE =============
 
 //================== ENEMY =====================
 //================== ZOOMER =====================
+enum ZOOMER_STATE
+{
+	ON_ZOOMER_UP,
+	ON_ZOOMER_BOTTOM,
+	ON_ZOOMER_LEFT,
+	ON_ZOOMER_RIGHT,
+};
+
+enum ZOOMER_DIRECTION {
+	ZOOMER_UP,
+	ZOOMER_LEFT,
+	ZOOMER_RIGHT,
+	ZOOMER_DOWN
+};
 #define ENEMY_SPRITE_PATH L"enemy\\metroid_enemies_sheet.png"
 #define ZOOMER_WIDTH 36
 #define ZOOMER_HEIGHT 32
 #define ZOOMER_SPRITE_COUNT 2
-#define ZOOMER_SPEED 75.0f
+#define ZOOMER_SPEED 60.0f
 
 ///////ENERGY
 #define ENERGY_SPRITE_PATH L"sprites\\energy\\energy.png"
@@ -322,6 +355,7 @@ enum ENEMY_TYPE
 #define BULLET_COUNT 8
 #define WIDTH_BULLET 12
 #define HEIGHT_BULLET 14
+#define BULLET_DAMGE 8
 
 enum Bullet_SAMUS_Direction
 {
@@ -336,8 +370,8 @@ enum Bullet_SAMUS_Direction
 
 //================== Grid ====================
 #define CELL_SIZE 128
-#define DEFINE_ROW 50
-#define DEFINE_COLUMN 100
+#define DEFINE_ROW 8
+#define DEFINE_COLUMN 20
 #define COLLISION_DISTANCE 15
 enum COLLISION_DIRECTION {
 	TOP,
@@ -352,3 +386,39 @@ enum COLLISION_DIRECTION {
 #define ZOOMER_PINK_CASE 1
 #define SKREE_CASE 2
 #define RIO_CASE 3
+
+//================== SKREE  =====================
+
+#define SKREE_WIDTH 36
+#define SKREE_HEIGHT 52
+
+#define SKREE_COUNT 3
+
+#define SKREE_PATH L"enemy\\SKREE.txt"
+
+#define SKREE_STANDARD_ANIMATE_RATE 7
+#define SKREE_BOOST_ANIMATE_RATE 30
+
+#define ZOOMER_YELLOW_CASE 0
+#define ZOOMER_PINK_CASE 1
+#define SKREE_CASE 2
+#define RIO_CASE 3
+
+#define SKREE_DISTANCE_TO_SAMUS  300.0f
+#define SKREE_SPEED 150.0f
+
+#define SKREE_BULLET_SPEED 125.0f
+#define SKREE_BULLET_DISTANCE 75.0f
+
+#define SKREE_LIVE_TIME 50.0f
+
+//================== END SKREE =================
+
+//================== EXPLOSION =================
+#define EXPLOSION L"enemy\\ENEMY_DETROYED.txt"
+#define EXPLOSION_PATH L"enemy\\explosion.png"
+#define EXPLOSION_COUNT 1
+#define EXPLOSION_WIDTH 48
+#define EXPLOSION_HEIGHT 48
+
+//================== END EXPLOSION =================

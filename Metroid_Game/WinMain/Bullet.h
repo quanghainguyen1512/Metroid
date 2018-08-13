@@ -7,12 +7,13 @@
 class Bullet : public GameObject
 {
 private:
-	Sprite *bulletSprite;
+
 	Bullet_SAMUS_Direction direction;
 	Bullet_SAMUS_Direction tempDirection;
 	bool isRendered;
 	int count;
 public:
+	Sprite * bulletSprite;
 	void initBullet(float posX, float posY);
 	void Update(float t);
 	void Update(float t, float posX, float posY);
@@ -23,7 +24,6 @@ public:
 	Bullet(LPD3DXSPRITE spriteHandler);
 	~Bullet();
 	
-
 	void setDirection(Bullet_SAMUS_Direction direction);
 	Bullet_SAMUS_Direction getDirection();
 	void setIsRendered(bool isRendered);

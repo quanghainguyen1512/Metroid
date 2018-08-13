@@ -15,11 +15,15 @@ void Metroid::_InitSprites(LPDIRECT3DDEVICE9 d3ddv)
 void Metroid::_InitPositions()
 {
 	world->samus->InitPostition();
-	world->maruMari->Init(420, 352);
-	world->energy->Init(420, 320);
+	world->maruMari->Init(1204, 352);
+	world->energy->Init(1300, 352);
+	world->missile->Init(1300, 384);
+	world->bomb->Init(1300, 320);
 	this->world->grid->add(this->world->samus);
 	this->world->grid->add(this->world->maruMari);
 	this->world->grid->add(this->world->energy);
+	this->world->grid->add(this->world->missile);
+	this->world->grid->add(this->world->bomb);
 }
 
 Metroid::Metroid(HINSTANCE hInstance, LPWSTR Name, int Mode, int IsFullScreen, int FrameRate) 
@@ -46,8 +50,8 @@ Metroid::Metroid(HINSTANCE hInstance, LPWSTR Name, int Mode, int IsFullScreen, i
 
 Metroid::~Metroid()
 {
-	//delete(map);
-	//delete(world);
+	delete(map);
+	delete(world);
 }
 
 /*
@@ -62,7 +66,6 @@ void Metroid::LoadResources(LPDIRECT3DDEVICE9 d3ddev)
 	if (result != D3D_OK) 
 		trace(L"Unable to create SpriteHandler");
 
-	
 	_texture = texture.loadTexture(d3ddev, BRICK_TEXTURE);
 	if (_texture == NULL)
 		trace(L"Unable to load BrickTexture");
@@ -73,6 +76,10 @@ void Metroid::LoadResources(LPDIRECT3DDEVICE9 d3ddev)
 	int height = this->map->getRow();
 	int width = this->map->getColumn();
 	world = new World(spriteHandler, this, width, height);
+
+	this->map->setGrid(world->grid);
+	this->map->inputBrickToGrid();
+
 	srand((unsigned)time(NULL));
 	this->_InitSprites(d3ddev);
 	this->_InitPositions();
@@ -259,6 +266,7 @@ void Metroid::ProcessInput(LPDIRECT3DDEVICE9 d3ddv, float Delta)
 	}
 	else
 	{
+		world->samus->checkpoint = world->samus->getVelocityX();
 		world->samus->setVelocityX(0);
 		if (!this->world->samus->getIsBall()) {
 			if (world->samus->getVelocityXLast() > 0)
@@ -415,28 +423,31 @@ void Metroid::ProcessInput(LPDIRECT3DDEVICE9 d3ddv, float Delta)
 		}
 	}
 	else if (_input->IsKeyDown(DIK_DOWN)) {
-		if (this->world->samus->GetState() == STAND_LEFT) {
-			this->world->samus->setPosY(this->world->samus->getPosY() + 32);
-			this->world->samus->SetState(TRANSFORM_BALL_LEFT);
-			for (int i = 0; i < this->world->samusBullet.size(); i++) {
-				if (!this->world->samusBullet[i]->getIsRendered()) {
-					this->world->samusBullet[i]->setDirection(OFF);
-					break;
+		if (this->world->samus->getCanMorph())
+		{
+			if (this->world->samus->GetState() == STAND_LEFT) {
+				this->world->samus->setPosY(this->world->samus->getPosY() + 32);
+				this->world->samus->SetState(TRANSFORM_BALL_LEFT);
+				for (int i = 0; i < this->world->samusBullet.size(); i++) {
+					if (!this->world->samusBullet[i]->getIsRendered()) {
+						this->world->samusBullet[i]->setDirection(OFF);
+						break;
+					}
 				}
-			}
 
-			this->world->samus->setIsBall(true);
-		}
-		else if(this->world->samus->GetState() == STAND_RIGHT){
-			this->world->samus->setPosY(this->world->samus->getPosY() + 32);
-			this->world->samus->SetState(TRANSFORM_BALL_RIGHT);
-			for (int i = 0; i < this->world->samusBullet.size(); i++) {
-				if (!this->world->samusBullet[i]->getIsRendered()) {
-					this->world->samusBullet[i]->setDirection(OFF);
-					break;
-				}
+				this->world->samus->setIsBall(true);
 			}
-			this->world->samus->setIsBall(true);
+			else if (this->world->samus->GetState() == STAND_RIGHT) {
+				this->world->samus->setPosY(this->world->samus->getPosY() + 32);
+				this->world->samus->SetState(TRANSFORM_BALL_RIGHT);
+				for (int i = 0; i < this->world->samusBullet.size(); i++) {
+					if (!this->world->samusBullet[i]->getIsRendered()) {
+						this->world->samusBullet[i]->setDirection(OFF);
+						break;
+					}
+				}
+				this->world->samus->setIsBall(true);
+			}
 		}
 	}
 	

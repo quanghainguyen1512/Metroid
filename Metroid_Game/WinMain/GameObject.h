@@ -17,7 +17,6 @@ public:
 	float lastPosY;
 	float friction = FRICTION;	//ma sát
 
-	Sprite * currentSprite;
 	GameObject * previousUnit;
 	GameObject * nextUnit;
 	float vx;		// x velocity

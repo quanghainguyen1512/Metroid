@@ -3,20 +3,22 @@
 class Item : public GameObject
 {
 protected:
-	ITEM_TYPE item_type;
 	float time_survive;
 	int number_gain;
+	Sprite * item;
 public:
 	Item(LPD3DXSPRITE sprietHandler, World * manager);
-	~Item();
+	virtual ~Item();
 	int getNumberGain();
 	void setNumberGain(int num);
-
+	void disappear();
 	//============= OVERRIDE VIRTUAL METHOD =================
 	virtual void InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture);
-	virtual void Init(float posX, float posY);
 	virtual void Update(float t);
-	virtual void Render();
+	virtual void touchedBySamus(Samus* samus) = 0;
 	//============= END OVERRIDE VIRTUAL METHOD =============
+	void Init(float posX, float posY);
+	void Render();
+	void Destroy();
 };
 

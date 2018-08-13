@@ -89,6 +89,15 @@ Samus::Samus()
 	this->isBall = false;
 
 	this->setType(SAMUS);
+
+	this->height = 64;
+	this->width = 32;
+
+	this->previousUnit = NULL;
+	this->nextUnit = NULL;
+
+	gravity = FALLDOWN_VELOCITY_DECREASE;
+	state = STAND_RIGHT;
 }
 
 void Samus::Destroy()
@@ -96,31 +105,30 @@ void Samus::Destroy()
 	//Ngưng active
 	this->isActive = false;
 
-	//--TO DO: Đưa Samus ra khỏi viewport
+	// TODO: Đưa Samus ra khỏi viewport
 }
 
-Samus::Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid* grid)
+void Samus::collideEnemy()
+{
+	collideDistanceY = this->pos_y - collideHeight;
+	if (getVelocityXLast() > 0) {		
+		isCollideRight = true;
+		collideDistanceX = this->pos_x - collideHeight * 2;
+	}
+	else {
+		isCollideLeft = true;
+		collideDistanceX = this->pos_x + collideHeight * 2;
+	}
+	isJumping = true;
+	isFalling = false;
+}
+
+Samus::Samus(LPD3DXSPRITE spriteHandler, World * manager, Grid* grid) : Samus()
 {
 	this->grid = grid;
-	this->setType(SAMUS);
+	
 	this->spriteHandler = spriteHandler;
 	this->manager = manager;
-	this->isActive = true;
-
-	this->previousUnit = NULL;
-	this->nextUnit = NULL;
-
-	//Set type
-	this->type = SAMUS;
-
-	/*width = 40;
-	height = 50;*/
-
-	gravity = FALLDOWN_VELOCITY_DECREASE;
-	this->isBall = false;
-
-	this->height = 64;
-	this->width = 32;
 }
 
 Samus::~Samus()
@@ -172,17 +180,14 @@ void Samus::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
 
 void Samus::InitPostition()
 {
-	//--TO DO: This code will be edited soon
+	// TODO: This code will be edited soon
 	/*pos_x = 992;	
 	pos_y = 320;*/	
 	this->pos_x = 1140;
 	this->pos_y = 352;
 	vx = 0;
 	vx_last = 1.0f;
-	vy = 0;
-
-	//Init state of samus
-	state = STAND_RIGHT;
+	vy = 0.0f;
 }
 
 SAMUS_STATE Samus::GetState()
@@ -241,20 +246,101 @@ void Samus::Reset(float x, float y)
 
 bool Samus::isSamusDeath()
 {
-	if (isDeath == true)
-		return true;
+	return isDeath;
 }
 
 // Update samus status
 void Samus::Update(float t)
 {
+	if (checkpoint != 0) {
+		pos_x = this->pos_x + checkpoint * t;
+		pos_y = this->pos_y + vy * t;
+	}
+	else {
+		pos_x = this->pos_x + vx * t;
+		pos_y = this->pos_y + vy * t;
+	}
+
+
+	int oldRow = floor(this->pos_y / CELL_SIZE);
+	int oldColumn = floor(this->pos_x / CELL_SIZE);
+
+	this->grid->handleCell(this, oldRow, oldColumn);
+	this->grid->updateGrid(this, this->pos_x, this->pos_y);
+
+	//dang bi va cham vang ra, ben phai va ben trai
+	if (isCollideRight) {
+		if (pos_x > collideDistanceX) {
+			vx = -SAMUS_SPEED;
+			if (isJumping == true && isFalling == false) {
+				if (pos_y > collideDistanceY) {
+					vy = -100;
+				}
+				else {
+					isJumping = false;
+					isFalling = true;
+				}				
+			}
+			else if (isJumping == false && isFalling == true) {
+				if (pos_y < collideDistanceY + collideHeight) {
+					vy = 100;
+				}
+				else {
+					isJumping = false;
+					isFalling = false;
+				}
+			}
+		}
+		else {
+			isCollideRight = false;
+		}
+	}
+	if (isCollideLeft) {
+		if (pos_x < collideDistanceX) {
+			vx = +SAMUS_SPEED;
+			if (isJumping == true && isFalling == false) {
+				if (pos_y > collideDistanceY) {
+					vy = -100;
+				}
+				else {
+					isJumping = false;
+					isFalling = true;
+				}
+			}
+			else if (isJumping == false && isFalling == true) {
+				if (pos_y < collideDistanceY + collideHeight) {
+					vy = 100;
+				}
+				else {
+					isJumping = false;
+					isFalling = false;
+				}
+			}
+		}
+		else {
+			isCollideLeft = false;
+		}
+	}
+	/*this->grid->showAllObject();
 	float newPosX = pos_x + vx * t;
 	float newPosY = pos_y + vy * t;
-	//vy += gravity;
-	if (!this->grid->updateGrid(this, newPosX, newPosY)) {
+
+	int row = (int)floor(this->pos_y / CELL_SIZE);
+	int column = (int)floor(this->pos_x / CELL_SIZE);
+
+	if (!this->grid->handleCell(this, row, column)) {
 		pos_x = newPosX;
 		pos_y = newPosY;
 	}
+
+	this->grid->updateGrid(this, this->pos_x, this->pos_y);
+*/
+	//if (!this->grid->updateGrid(this, newPosX, newPosY)) {
+	//	pos_x = newPosX;
+	//	pos_y = newPosY;
+	//}
+	//pos_x = newPosX;
+	//pos_y = newPosY;
 
 	// Animate samus if he is running
 	DWORD now = GetTickCount();
@@ -329,4 +415,12 @@ void Samus::setIsBall(bool isBall) {
 
 bool Samus::getIsBall() {
 	return this->isBall;
+}
+
+void Samus::setCanMorph(bool canMorph) {
+	this->canMorph = canMorph;
+}
+
+bool Samus::getCanMorph() {
+	return this->canMorph;
 }
