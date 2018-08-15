@@ -33,7 +33,7 @@ public:
 	void setIsRendered(bool isRendered);
 	bool getIsRendered();
 
-	Bullet_Skree_Direction bulletDirection;
+	Bullet_Enemy_Direction bulletDirection;
 
 	void setRange(float _range);
 	float getRange();

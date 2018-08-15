@@ -13,7 +13,7 @@ BulletSkree::BulletSkree(LPD3DXSPRITE spriteHandler, Grid * grid)
 	this->isRendered = false;
 	pos_x = 0.0f;
 	pos_y = 0.0f;
-	this->setType(BULLET);
+	this->setType(BULLET_SKREE);
 	this->grid = grid;
 	this->startX = 0.0f;
 	this->startY = 0.0f;
@@ -87,14 +87,11 @@ void BulletSkree::Render() {
 
 void BulletSkree::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture) {
 	if (d3ddv == NULL) return;
-	Texture * texture1 = new Texture();
-	// Bullet Texture
-	LPDIRECT3DTEXTURE9 bulletTexture = texture1->loadTexture(d3ddv, SAMUS_BULLET_PATH);
 	
-	if (bulletTexture == NULL)
+	if (texture == NULL)
 		trace(L"Unable to load BulletTexture");
 
-	this->sprite = new Sprite(this->spriteHandler, texture, WIDTH_BULLET, HEIGHT_BULLET, 1, 1);
+	this->sprite = new Sprite(this->spriteHandler, texture, WIDTH_BULLET, HEIGHT_BULLET,1,1);
 }
 
 void BulletSkree::Reset(float posX, float posY)
