@@ -32,6 +32,8 @@ public:
 	void setState(ZOOMER_STATE _state);
 	ZOOMER_STATE getState();
 
+	void setSamusLocation(float posX, float posY);
+
 	void setDirection(ZOOMER_DIRECTION direction);
 	ZOOMER_DIRECTION getDirection();
 	
@@ -56,7 +58,6 @@ public:
 	virtual void Render();
 	virtual void setEnemyStatefromString(string _state);
 	virtual void startMoving();
-	virtual void startMovingBySamus(int _posX, int _posY);
 	//============== END OVERRIDE VIRTUAL METHOD ===============
 	void Destroy(float x, float y);
 

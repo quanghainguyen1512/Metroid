@@ -34,8 +34,8 @@ public:
 
 	Bullet_Enemy_Direction bulletDirection;
 
-	float Kraid_posX;
-	float Kraid_posY;
+	float Ridley_posX;
+	float Ridley_posY;
 
 	float Samus_posX;
 
@@ -46,4 +46,9 @@ public:
 
 	float collideDistanceY;
 	float collideDistanceX;
+
+	float liveTime = 0;
+	bool isWaiting = false;
+
+	float speed = 0;
 };

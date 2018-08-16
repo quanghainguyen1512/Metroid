@@ -51,7 +51,7 @@ void Enemy::startMoving()
 {
 }
 
-void Enemy::setSamusLocation(int _posX, int _posY)
+void Enemy::setSamusLocation(float posX, float posY)
 {
 }
 

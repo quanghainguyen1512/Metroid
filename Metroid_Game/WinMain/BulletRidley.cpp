@@ -36,26 +36,32 @@ BulletRidley::~BulletRidley() {
 void BulletRidley::initBullet(float _Kraid_posX, float _Kraid_posY, float _Samus_posX) {
 	this->pos_x = _Kraid_posX;
 	this->pos_y = _Kraid_posY;
-	if (Kraid_posX - _Samus_posX < 0) {
+	if (_Kraid_posX - _Samus_posX < 0) {
 		bulletDirection = BULLET_RIGHT;
-		collideDistanceX = _Kraid_posX + collideHeight * 4;
 	}
-
 	else {
 		bulletDirection = BULLET_LEFT;
-		collideDistanceX = _Kraid_posX - collideHeight * 4;
 	}
-	collideDistanceY = _Kraid_posX - ENEMY_BULLET_DISTANCE;
+	collideDistanceY = _Kraid_posY - 40;
 	isUp = true;
 	isDown = false;
+	isActive = true;
+	liveTime = rand() % 50 + 1;
+	speed = rand() % 30 + 50;
 }
 
 
 void BulletRidley::Update(float t) {
-	if (bulletDirection == BULLET_RIGHT) {
-		if (pos_x < collideDistanceX) {
+	liveTime += t * 75;
+	if (liveTime > 100) {
+		if (isWaiting == false) {
+			isWaiting = true;
+			this->pos_x = Ridley_posX;
+			this->pos_y = Ridley_posY;
+		}
+		if (bulletDirection == BULLET_RIGHT) {
+			vx = speed;
 			if (isUp && !isDown) {
-				vx = SKREE_BULLET_SPEED;
 				if (pos_y > collideDistanceY) {
 					vy = -SKREE_BULLET_SPEED;
 				}
@@ -65,22 +71,21 @@ void BulletRidley::Update(float t) {
 				}
 			}
 			else if (!isUp && isDown) {
-				vx = SKREE_BULLET_SPEED;
-				if (pos_y < collideDistanceY + collideHeight) {
+				if (pos_y < collideDistanceY + collideHeight + 400) {
 					vy = SKREE_BULLET_SPEED;
+				}
+				else {
+					vy = 0;
+					isUp = false;
+					isDown = false;
+					isActive = false;
+					isWaiting = false;
 				}
 			}
 		}
-		else {
-			vy = 0;
-			isUp = false;
-			isDown = false;
-		}
-	}
-	else if (bulletDirection == BULLET_LEFT) {
-		if (pos_x > collideDistanceX) {
+		else if (bulletDirection == BULLET_LEFT) {
+			vx = -speed;
 			if (isUp && !isDown) {
-				vx = -SKREE_BULLET_SPEED;
 				if (pos_y > collideDistanceY) {
 					vy = -SKREE_BULLET_SPEED;
 				}
@@ -90,30 +95,32 @@ void BulletRidley::Update(float t) {
 				}
 			}
 			else if (!isUp && isDown) {
-				vx = SKREE_BULLET_SPEED;
-				if (pos_y < collideDistanceY + collideHeight) {
+				if (pos_y < collideDistanceY + collideHeight + 400) {
 					vy = SKREE_BULLET_SPEED;
 				}
+				else {
+					vy = 0;
+					isUp = false;
+					isDown = false;
+					isActive = false;
+					isWaiting = false;
+				}
 			}
+
 		}
-		else {
-			vy = 0;
-			isUp = false;
-			isDown = false;
-		}
-	}
 
-	int row = (int)floor(this->pos_y / CELL_SIZE);
-	int column = (int)floor(this->pos_x / CELL_SIZE);
+		int row = (int)floor(this->pos_y / CELL_SIZE);
+		int column = (int)floor(this->pos_x / CELL_SIZE);
 
-	this->pos_x += vx * t;
-	this->pos_y += vy * t;
+		this->pos_x += vx * t;
+		this->pos_y += vy * t;
 
-	this->grid->handleCell(this, row, column);
-	this->grid->updateGrid(this, this->pos_x, this->pos_y);
+		//this->grid->handleCell(this, row, column);
+		//this->grid->updateGrid(this, this->pos_x, this->pos_y);
 
-	if (isCollided) {
-		Reset(Kraid_posX, Kraid_posY);
+		//if (isCollided) {
+		//	isActive= false;
+		//}
 	}
 }
 
@@ -124,12 +131,14 @@ void BulletRidley::Update(float t, float posX, float posY)
 
 
 void BulletRidley::Render() {
-	D3DXVECTOR3 position;
-	position.x = pos_x;
-	position.y = pos_y;
-	position.z = 0;
-	D3DXVECTOR3 pos = D3DXVECTOR3(pos_x, pos_y, 0);
-	sprite->drawSprite(0, 0, WIDTH_BULLET, HEIGHT_BULLET, pos);
+	if (liveTime > 100) {
+		D3DXVECTOR3 position;
+		position.x = pos_x;
+		position.y = pos_y;
+		position.z = 0;
+		D3DXVECTOR3 pos = D3DXVECTOR3(pos_x, pos_y, 0);
+		sprite->drawSprite(0, 0, WIDTH_BULLET, HEIGHT_BULLET, pos);
+	}
 }
 
 void BulletRidley::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture) {
@@ -138,7 +147,7 @@ void BulletRidley::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 textu
 	if (texture == NULL)
 		trace(L"Unable to load BulletTexture");
 
-	this->sprite = new Sprite(this->spriteHandler, texture, BULLET_SKREE_PATH, WIDTH_BULLET, HEIGHT_BULLET, 1);
+	this->sprite = new Sprite(this->spriteHandler, texture, SAMUS_BULLET_PATH, WIDTH_BULLET, HEIGHT_BULLET, 1);
 }
 
 void BulletRidley::Reset(float posX, float posY)

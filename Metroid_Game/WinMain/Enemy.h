@@ -11,7 +11,7 @@ protected:
 	LPDIRECT3DTEXTURE9 texture;
 	float initPosX;
 	float initPosY;
-	float isEnemyFreezed = false;
+	float isEnemyFreezed;
 public:
 	float time_freeze;	// thời gian dừng khi bị hit
 	int health;		// Máu của object
@@ -34,8 +34,9 @@ public:
 	virtual void Update(float t);
 	virtual void setEnemyStatefromString(string _state);
 	virtual void startMoving();
-	virtual void setSamusLocation(int _posX, int _posY);
 	//============== END OVERRIDE VIRTUAL METHOD ============
+
+	virtual void setSamusLocation(float posX, float posY);
 
 	bool isInsideMapBound(RECT cameraBound);
 

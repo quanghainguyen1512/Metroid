@@ -1,5 +1,4 @@
 ﻿#include "Zoomer.h"
-#include "Skree.h"
 #include "World.h"
 
 Zoomer::Zoomer()
@@ -20,7 +19,7 @@ Zoomer::Zoomer(LPD3DXSPRITE spriteHandler, World * manager, OBJECT_TYPE enemy_ty
 
 	this->health = 100;
 
-	this->grid = manager->grid;
+	this->grid = manager->getMetroid()->getGrid();
 
 	this->isDeath = false;
 	this->setIsEnemyFreezed(false);
@@ -103,15 +102,15 @@ ZOOMER_STATE Zoomer::getState() {
 	return state;
 }
 
+void Zoomer::setSamusLocation(float posX, float posY)
+{
+}
+
 
 // Bắt đầu di chuyển khi camera đi tới
 void Zoomer::startMoving()
 {
 	
-}
-
-void Zoomer::startMovingBySamus(int _posX, int _posY)
-{
 }
 
 // Dùng để thiết lập vận tốc cho zoomer
@@ -165,7 +164,7 @@ void Zoomer::setVelocity() {
 
 void Zoomer::Update(float t)
 {
-	if (!this->isActive) return;
+	if (!this->isActive || this->isDeath) return;
 	if (this->isEnemyFreezed) {
 		this->isEnemyFreezed = false;
 		return;
@@ -391,7 +390,7 @@ void Zoomer::Destroy(float x, float y)
 		this->reset();
 		GameObject* object = static_cast<GameObject*>(this);
 		object->setActive(false);
-		this->manager->grid->updateGrid(object, this->getPosX(), this->getPosY());
+		this->grid->updateGrid(object, this->getPosX(), this->getPosY());
 	}
 }
 

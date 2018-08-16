@@ -1,110 +1,109 @@
 ﻿#include "Skree.h"
 #include "World.h"
 
+
 Skree::Skree()
 {
 }
 
-Skree::Skree(LPD3DXSPRITE spriteHandler, World * manager, OBJECT_TYPE enemy_type) : Enemy(spriteHandler, manager)
+Skree::Skree(LPD3DXSPRITE spriteHandler, World * manager, OBJECT_TYPE enemy_type)
 {
 	this->setType(enemy_type);
-	this->isActive = false;
+	this->setActive(false);
 	this->width = SKREE_WIDTH;
 	this->height = SKREE_HEIGHT;
-	this->grid = manager->grid;
-	//Set animate rate ban đầu
-	animate_rate = SKREE_STANDARD_ANIMATE_RATE;
-	setState(ON_HANGING);
+	this->grid = manager->getMetroid()->getGrid();
+	this->manager = manager;
 
+	// thiết lập animate rate ban đầu
+	this->animate_rate = SKREE_STANDARD_ANIMATE_RATE;
+	this->setState(ON_HANGING);
+	this->health = 100;
+	this->isDeath = false;
+	this->isEnemyFreezed = false;
+	this->vx = 0.0f;
+	this->vy = 0.0f;
 }
+
 
 Skree::~Skree()
 {
-	delete(skree);
-}
-
-void Skree::setState(SKREE_STATE _state)
-{
-	state = _state;
-}
-
-SKREE_STATE Skree::getState()
-{
-	return state;
+	delete(this->skreeSprite);
 }
 
 void Skree::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
 {
 	if (d3ddv == NULL) return;
-	//Create sprite handler
 	HRESULT result = D3DXCreateSprite(d3ddv, &spriteHandler);
 	if (result != D3D_OK) return;
 
 	this->texture = texture;
-	if (texture == NULL)
+	if(texture == NULL)
 		trace(L"Unable to load skreeTexture");
 
-	// Khởi tạo sprite
-	skree = new Sprite(spriteHandler, texture, SKREE_PATH, SKREE_WIDTH, SKREE_HEIGHT, SKREE_COUNT);
+	skreeSprite = new Sprite(spriteHandler, texture, SKREE_PATH, SKREE_WIDTH, SKREE_HEIGHT, SKREE_COUNT);
 }
+
 void Skree::Update(float t)
 {
-	//	grid->add(this);
-	if (!isActive) return;
+	if (!isActive || isDeath) return;
 	if (this->isEnemyFreezed) {
 		this->isEnemyFreezed = false;
 		return;
 	}
 
-	this->setIsTopCollided(false);
-	setIsBottomCollided(false);
-	setIsRightCollided(false);
-	setIsLeftCollided(false);
-	setIsCollisionHandled(false);
-	
+	this->setIsTop(false);
+	this->setIsBottom(false);
+	this->setIsLeft(false);
+	this->setIsRight(false);
+	this->setIsCollisionHandled(false);
 
-	if (getState() != LANDED && getState() != SHOT) {
+	if (this->getState() != LANDED && this->getState() != SHOT) {
 		//tinh khoang cach voi samus bang dinh luat Pytago
-		float rs = sqrt(((abs)(pos_x - samus_PosX)) * ((abs)(pos_x - samus_PosX)) + ((abs)(pos_y - samus_PosY) * (abs)(pos_y - samus_PosY)));
-		
+		float rs = sqrt(((abs)(pos_x - samusPosX)) * ((abs)(pos_x - samusPosX)) + ((abs)(pos_y - samusPosY) * (abs)(pos_y - samusPosY)));
+
 		if (rs < SKREE_DISTANCE_TO_SAMUS && getState() != LANDED) {
 			animate_rate = SKREE_BOOST_ANIMATE_RATE;
 			setState(ON_FALLING);
 			setActive(true);
 			vy = SKREE_SPEED;
-			if (samus_PosX < pos_x)
+			if (samusPosX < pos_x)
 				vx = -SKREE_SPEED;
-			else if (samus_PosX > pos_x)
+			else if (samusPosX > pos_x)
 				vx = SKREE_SPEED;
 			else
 				vx = 0;
 		}
 
-		pos_x = this->pos_x + vx * t;
-		pos_y = this->pos_y + vy * t;
-
 		int oldRow = floor(this->pos_y / CELL_SIZE);
 		int oldColumn = floor(this->pos_x / CELL_SIZE);
 
 		this->grid->handleCell(this, oldRow, oldColumn);
+		if (!isCollisionHandled) {
+			if (!this->isBottom) {
+				pos_y = this->pos_y + vy * t;
+			}
+			pos_x = this->pos_x + vx * t;
+		}
 		this->grid->updateGrid(this, this->pos_x, this->pos_y);
 		DWORD now = GetTickCount();
 		if (now - last_time > 1000 / animate_rate)
 		{
-			skree->updateSprite();
+			skreeSprite->updateSprite();
 			last_time = now;
 		}
 	}
-	else if (getState() == LANDED) {
-		liveTime += t*75;
+	else if (this->getState() == LANDED) {
+		liveTime += t * 75;
 		if (liveTime > SKREE_LIVE_TIME) {
-			isDeath = true;
+			this->health = 0.0f;
+			this->Destroy(this->pos_x, this->pos_y);
 
-			for (int i = 0; i < manager->bulletSkree.size(); i++) {
+			/*for (int i = 0; i < manager->bulletSkree.size(); i++) {
 				manager->bulletSkree[i]->isActive = true;
 				manager->bulletSkree[i]->pos_x = this->pos_x;
 				manager->bulletSkree[i]->pos_y = this->pos_y + 32;
-			}		
+			}
 
 			manager->bulletSkree[0]->bulletDirection = BULLET_RIGHT;
 			manager->bulletSkree[1]->bulletDirection = BULLET_LEFT;
@@ -114,14 +113,14 @@ void Skree::Update(float t)
 			manager->bulletSkree[0]->setRange(this->pos_x + SKREE_BULLET_DISTANCE);
 			manager->bulletSkree[2]->setRange(this->pos_x + SKREE_BULLET_DISTANCE);
 
-			manager->bulletSkree[1]->setRange( this->pos_x - SKREE_BULLET_DISTANCE);
-			manager->bulletSkree[3]->setRange(this->pos_x - SKREE_BULLET_DISTANCE);
+			manager->bulletSkree[1]->setRange(this->pos_x - SKREE_BULLET_DISTANCE);
+			manager->bulletSkree[3]->setRange(this->pos_x - SKREE_BULLET_DISTANCE);*/
 		}
 		else {
 			DWORD now = GetTickCount();
 			if (now - last_time > 1000 / animate_rate)
 			{
-				skree->updateSprite();
+				skreeSprite->updateSprite();
 				last_time = now;
 			}
 		}
@@ -130,7 +129,6 @@ void Skree::Update(float t)
 
 void Skree::Render()
 {
-	spriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
 	if (isActive && !isDeath) {
 		if (getState() != SHOT) {
 			D3DXVECTOR3 position;
@@ -141,64 +139,38 @@ void Skree::Render()
 			// Nếu không active thì không render
 			if (!isActive)
 				return;
-			skree->drawSprite(skree->getWidth(), skree->getHeight(), position);
+			skreeSprite->drawSprite(skreeSprite->getWidth(), skreeSprite->getHeight(), position);
 		}
 	}
-	spriteHandler->End();
 }
 
 void Skree::setEnemyStatefromString(string _state)
 {
-
 }
 
 void Skree::startMoving()
 {
 }
 
-void Skree::setSamusLocation(int _posX, int _posY)
+void Skree::setSamusLocation(float _posX, float _posY)
 {
-	samus_PosX = _posX;
-	samus_PosY = _posY;
+	this->samusPosX = _posX;
+	this->samusPosY = _posY;
 }
-
 
 void Skree::handleBullet(int bulletType)
 {
-
 }
-
 
 void Skree::Destroy()
 {
-	//// Effect explosion
 
-	//// Destroy
-	//vx = 0;
-
-	//manager->explsEffect->Init(this->pos_x, this->pos_y);	 // Xảy ra lỗi khi giết những mục tiêu to (Ridley, Mother Brain)
-	//														 // Drop item after destroyed
-	//int random;
-
-	///* initialize random seed: */
-	//srand(time(NULL));
-
-	///* generate secret number between 1 and 10: */
-	//random = rand() % 10 + 1;
-
-	//if (random == 1 || random == 5)
-	//	manager->energyItem->Init(this->pos_x, this->pos_y);
-	//else if (random == 7 || random == 9)
-	//	manager->missileItem->Init(this->pos_x, this->pos_y);
-	//Enemy::Destroy();
 }
 
 void Skree::Destroy(float x, float y)
 {
 	if (this->health == 0)
 	{
-		//comment vì chưa add explodeEffect vào manager, ai merge thì bỏ comment nhe :v
-
 		manager->explodeEffect->setTimeSurvive(EFFECT_TIME_SURVIVE);
 		if (manager->explodeEffect->getTimeSurvive() > 0)
 		{
@@ -212,7 +184,7 @@ void Skree::Destroy(float x, float y)
 		this->reset();
 		GameObject* object = static_cast<GameObject*>(this);
 		object->setActive(false);
-		this->manager->grid->updateGrid(object, this->getPosX(), this->getPosY());
+		this->grid->updateGrid(object, this->getPosX(), this->getPosY());
 	}
 }
 
@@ -220,46 +192,105 @@ void Skree::reset()
 {
 	this->pos_x = this->getInitPosX();
 	this->pos_y = this->getInitPosY();
-	//this->direction = this->getInitDirection();
-	//this->state = this->getInitState();
+	this->setState(ON_HANGING);
 }
 
-void Skree::setIsLeftCollided(bool isLeft) {
-	this->isLeftCollided = isLeft;
+void Skree::setState(SKREE_STATE state)
+{
+	this->state = state;
 }
 
-bool Skree::getIsLeftCollided() {
-	return this->isLeftCollided;
+SKREE_STATE Skree::getState()
+{
+	return this->state;
 }
 
-void Skree::setIsRightCollided(bool isRight) {
-	this->isRightCollided = isRight;
+void Skree::setIsLeft(bool isLeft)
+{
+	this->isLeft = isLeft;
 }
 
-bool Skree::getIsRightCollided() {
-	return this->isRightCollided;
+bool Skree::getIsLeft()
+{
+	return this->isLeft;
 }
 
-void Skree::setIsTopCollided(bool isTop) {
-	this->isTopCollided = isTop;
+void Skree::setIsRight(bool isRight)
+{
+	this->isRight = isRight;
 }
 
-bool Skree::getIsTopCollided() {
-	return isTopCollided;
+bool Skree::getIsRight()
+{
+	return this->isRight;
 }
 
-void Skree::setIsBottomCollided(bool isBottom) {
-	isBottomCollided = isBottom;
+void Skree::setIsTop(bool isTop)
+{
+	this->isTop = isTop;
 }
 
-bool Skree::getIsBottomCollided() {
-	return isBottomCollided;
+bool Skree::getIsTop()
+{
+	return this->isTop;
 }
 
-void Skree::setIsCollisionHandled(bool isHandled) {
-	isCollisionHandled = isHandled;
+void Skree::setIsBottom(bool isBottom)
+{
+	this->isBottom = isBottom;
 }
 
-bool Skree::getIsCollisionHandled() {
-	return isCollisionHandled;
+bool Skree::getIsBottom()
+{
+	return this->isBottom;
+}
+
+void Skree::setIsCollisionHandled(bool isHandled)
+{
+	this->isCollisionHandled = isHandled;
+}
+
+bool Skree::getisCollisionHandled()
+{
+	return this->isCollisionHandled;
+}
+
+void Skree::setSamusPosX(float posX)
+{
+	this->samusPosX = posX;
+}
+
+float Skree::getSamusPosX()
+{
+	return this->samusPosX;
+}
+
+void Skree::setSamusPosY(float posY)
+{
+	this->samusPosY = posY;
+}
+
+float Skree::getSamusPosY()
+{
+	return this->samusPosY;
+}
+
+void Skree::setRange(float range)
+{
+	this->range = range;
+}
+
+float Skree::getRange()
+{
+	return this->range;
+}
+
+void Skree::setLiveTime(float liveTime)
+{
+	this->liveTime = liveTime;
+}
+
+float Skree::getLiveTime()
+{
+	return this->liveTime;
 }

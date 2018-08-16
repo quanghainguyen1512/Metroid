@@ -33,8 +33,14 @@ protected:
 	bool isBall;
 	float startPosJump;
 	float endPosJump;
+
+	ROOM_NUMBER roomNum;
 private:
 	vector<string> stringMapSamus;
+	bool isChangingRoom;
+	float posX_StartChangingRoom;
+	float posX_EndChangingRoom;
+	bool startMovingAfterRoomChanged;
 public:
 	bool isJumping;	// Trạng thái đang nhảy của Samus
 	bool canMorph = true;
@@ -47,11 +53,9 @@ public:
 	bool isRight = false;
 	bool isColisionHandled = false;
 
-	bool isCollideLeft = false;
-	bool isCollideRight = false;
-	bool isControlled = true;
-	float collideDistanceX = 0;
-	float collideDistanceY = 0;
+	bool isCollideWithEnemy = false;
+	// Khi va cham thi animate_rate thay doi
+	int animate_rate;
 
 	float health;	// Máu của Samus
 	bool isDeath = false;	// Trạng thái chết của Samus
@@ -77,6 +81,7 @@ public:
 	//================ OVERRIDE VIRTUAL METHOD ==================
 	void Reset(float  x, float y);
 	void Update(float t);
+	void collideEnemy();
 	void Render();
 	void Destroy();
 	//================= END OVERRIDE VIRTUAL METHOD =============
@@ -87,10 +92,23 @@ public:
 	float getEndPosJump() { return this->endPosJump; }
 
 	void setDimension();
+	void setRoomNum();
 	void setStringMap(vector<string> stringMap) { this->stringMapSamus = stringMap; }
 	vector<string> getStringMap() { return this->stringMapSamus; }
 
-	void collideEnemy();
+	void setIsChangingRoom(bool value) { this->isChangingRoom = value; }
+	bool getIsChangingRoom() { return this->isChangingRoom; }
+
+	void setPosX_StartChangingRoom(float value) { this->posX_StartChangingRoom = value; }
+	float getPosX_StartChangingRoom() { return this->posX_StartChangingRoom; }
+	void  setPosX_EndChangingRoom(float value) { this->posX_EndChangingRoom = value; }
+	float getPosX_EndChangingRoom() { return this->posX_EndChangingRoom; }
+	
+	void setStartMovingAfterRoomChanged(bool value) { this->startMovingAfterRoomChanged = value; }
+	float getStartMovingAfterRoomChanged() { return this->startMovingAfterRoomChanged; }
+
+	void setRoomNum(ROOM_NUMBER value) { this->roomNum = value; }
+	ROOM_NUMBER getRoomNum() { return this->roomNum; }
 };
 
 

@@ -46,4 +46,7 @@ public:
 
 	float collideDistanceY;
 	float collideDistanceX;
+
+	float liveTime = 0;
+	bool isWaiting = false;
 };

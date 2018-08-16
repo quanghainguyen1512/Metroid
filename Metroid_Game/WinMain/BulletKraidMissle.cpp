@@ -35,36 +35,45 @@ BulletKraidMissle::~BulletKraidMissle() {
 
 void BulletKraidMissle::initBullet(float _Kraid_posX, float _Kraid_posY, float _Samus_posX) {
 	this->isActive = true;
-	this->pos_x = _Kraid_posX;
-	this->pos_y = _Kraid_posY;
+	this->Kraid_posX = _Kraid_posX;
+	this->Kraid_posY = _Kraid_posY;
 	if (Kraid_posX - _Samus_posX < 0)
 		bulletDirection = BULLET_RIGHT;
 	else
 		bulletDirection = BULLET_LEFT;
+	this->pos_x = _Kraid_posX;
+	this->pos_y = _Kraid_posY;
 }
 
 
 void BulletKraidMissle::Update(float t) {
+	if (!isActive)
+		return;
 	if (bulletDirection == BULLET_RIGHT) {
-		vx = SKREE_BULLET_SPEED;
+		vx = 200;
 		vy = 0;
 	}
-	else if (bulletDirection == BULLET_LEFT) {
-		vx = -SKREE_BULLET_SPEED;
+	else {
+		vx = -200;
 		vy = 0;
 	}
 
 	int row = (int)floor(this->pos_y / CELL_SIZE);
 	int column = (int)floor(this->pos_x / CELL_SIZE);
 
-	this->pos_x += vx * t;
-	this->pos_y += vy * t;
+	this->pos_x = pos_x + vx * t ;
+	this->pos_y = pos_y + vy * t;
 
-	this->grid->handleCell(this, row, column);
-	this->grid->updateGrid(this, this->pos_x, this->pos_y);
+	//this->grid->handleCell(this, row, column);
+	//this->grid->updateGrid(this, this->pos_x, this->pos_y);
 
-	if (isCollided) {
-		Reset(Kraid_posX, Kraid_posY);
+	//if (isCollided) {
+	//	Reset(Kraid_posX, Kraid_posY);
+	//}
+	liveTime += t * 75;
+	if (liveTime > 50) {
+		isActive = false;
+		liveTime = 0;
 	}
 }
 
@@ -89,7 +98,7 @@ void BulletKraidMissle::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 
 	if (texture == NULL)
 		trace(L"Unable to load BulletTexture");
 
-	this->sprite = new Sprite(this->spriteHandler, texture, BULLET_SKREE_PATH, WIDTH_BULLET, HEIGHT_BULLET, 1);
+	this->sprite = new Sprite(this->spriteHandler, texture, SAMUS_BULLET_PATH, WIDTH_BULLET, HEIGHT_BULLET, 1);
 }
 
 void BulletKraidMissle::Reset(float posX, float posY)

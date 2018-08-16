@@ -1,13 +1,16 @@
 ﻿#include "Gate.h"
 
-Gate::Gate(LPD3DXSPRITE spriteHandler, World * manager, Grid * grid)
+Gate::Gate()
+{
+}
+
+Gate::Gate(LPD3DXSPRITE spriteHandler, World * manager)
 {
 	this->spriteHandler = spriteHandler;
 	this->manager = manager;
 	this->type = GATE;
 	this->width = GATE_WIDTH;
 	this->height = GATE_HEIGHT;
-	this->grid = grid;
 
 	exists_right = nullptr;
 	exists_left = nullptr;
@@ -19,11 +22,13 @@ Gate::Gate(LPD3DXSPRITE spriteHandler, World * manager, Grid * grid)
 
 	//Set time survive
 	time_survive = GATE_TIME_SURVIVE;
+	this->timeStartOpen = 0.0f;
+	
 }
 
 Gate::~Gate()
 {
-	currentSprite = nullptr; delete (currentSprite);
+	//currentSprite = nullptr; delete (currentSprite);
 	delete(exists_right);
 	delete(exists_left);
 	delete(destroying_right);
@@ -59,41 +64,15 @@ void Gate::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture, GATE
 	if (result != D3D_OK) return;
 
 	exists_left = new Sprite(spriteHandler, texture, GATE_LEFT_EXISTS, GATE_WIDTH, GATE_HEIGHT, GATE_EXISTS_COUNT);
-	destroying_left = new Sprite(spriteHandler, texture, GATE_LEFT_DESTROYING, GATE_WIDTH, GATE_HEIGHT, GATE_DESTROYING_COUNT);
+	//destroying_left = new Sprite(spriteHandler, texture, GATE_LEFT_DESTROYING, GATE_WIDTH, GATE_HEIGHT, GATE_DESTROYING_COUNT);
 	exists_right = new Sprite(spriteHandler, texture, GATE_RIGHT_EXISTS, GATE_WIDTH, GATE_HEIGHT, GATE_EXISTS_COUNT);
-	destroying_right = new Sprite(spriteHandler, texture, GATE_RIGHT_DESTROYING, GATE_WIDTH, GATE_HEIGHT, GATE_DESTROYING_COUNT);
+	//destroying_right = new Sprite(spriteHandler, texture, GATE_RIGHT_DESTROYING, GATE_WIDTH, GATE_HEIGHT, GATE_DESTROYING_COUNT);
 }
 
 void Gate::Init(int x, int y)
 {
 	this->pos_x = x;
 	this->pos_y = y;
-
-	switch (state)
-	{
-	case CLOSE:
-		switch (gate_type)
-		{
-		case LEFT:
-			currentSprite = exists_left;
-			break;
-		case RIGHT:
-			currentSprite = exists_right;
-			break;
-		}
-		break;
-	case DESTROYING:
-		switch (gate_type)
-		{
-		case LEFT:
-			currentSprite = destroying_left;
-			break;
-		case RIGHT:
-			currentSprite = destroying_right;
-			break;
-		}
-		break;
-	}
 }
 
 void Gate::Update(float t)
@@ -101,29 +80,34 @@ void Gate::Update(float t)
 	if (!isActive)
 		return;
 
+	if (GetTickCount() - this->timeStartOpen >= time_survive) {
+		this->setGateState(CLOSE);
+		if (this->pos_x <= this->manager->samus->pos_x && this->manager->samus->pos_x <= this->pos_x + this->width) {
+			this->setGateState(OPEN);
+		}
+	}
+	else {
+		this->setGateState(OPEN);
+	}
+
+
 	DWORD now = GetTickCount();
 	if (now - last_time > 1000 / ANIMATE_RATE)
-	{			
-		switch(state)
-		{
-		case CLOSE:
-			break;
-		case DESTROYING:
-			currentSprite->updateIndex();
-			if (currentSprite == destroying_left || currentSprite == destroying_right)
-			{
-				if (currentSprite->GetIndex() == currentSprite->GetCount() - 1)
-				{
-					state = OPEN;
-					isActive = false;
-				}
+	{
+		if (this->state == CLOSE) {
+			switch (this->gate_type) {
+			case GATE_LEFT: {
+				exists_left->updateSprite();
+				break;
 			}
-			break;
-		}		
-		last_time = now;
+			case GATE_RIGHT: {
+				exists_right->updateSprite();
+				break;
+			}
+			}
+		}
 	}
 }
-
 void Gate::Render()
 {
 	D3DXVECTOR3 position;
@@ -133,13 +117,33 @@ void Gate::Render()
 
 	if (!isActive)
 		return;
-
-	currentSprite->drawSprite(currentSprite->getWidth(), currentSprite->getHeight(), position);
 	
+	if (this->state == CLOSE) {
+		switch (this->gate_type) {
+		case GATE_LEFT: {
+			exists_left->drawSprite(exists_left->getWidth(), exists_left->getHeight(), position);
+			break;
+		}
+		case GATE_RIGHT: {
+			exists_right->drawSprite(exists_right->getWidth(), exists_right->getHeight(), position);
+			break;
+		}
+		}
+	}
 }
 
 void Gate::DestroyGate()
 {
 	//Đặt state là destroy để hủy cổng
 	state = DESTROYING;
+}
+
+void Gate::setIsRight(bool value)
+{
+	isRight = value;
+}
+
+void Gate::setIsLeft(bool value)
+{
+	isLeft = value;
 }

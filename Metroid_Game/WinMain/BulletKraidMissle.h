@@ -38,6 +38,7 @@ public:
 	float Kraid_posY;
 
 	float Samus_posX;
-
 	bool isCollided;
+
+	float liveTime = 0;
 };

@@ -136,7 +136,6 @@
     <ClCompile Include="BulletKraid.cpp" />
     <ClCompile Include="BulletKraidMissle.cpp" />
     <ClCompile Include="BulletRidley.cpp" />
-    <ClCompile Include="BulletSkree.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DeviceManager.cpp" />
@@ -149,14 +148,18 @@
     <ClCompile Include="ExplodeEffect.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Gate.cpp" />
+    <ClCompile Include="GateBlock.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Kraid.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MaruMari.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Metroid.cpp" />
+    <ClCompile Include="Ridley.cpp" />
     <ClCompile Include="Samus.cpp" />
     <ClCompile Include="SDKsound.cpp" />
     <ClCompile Include="SDKwavefile.cpp" />
@@ -176,7 +179,6 @@
     <ClInclude Include="BulletKraid.h" />
     <ClInclude Include="BulletKraidMissle.h" />
     <ClInclude Include="BulletRidley.h" />
-    <ClInclude Include="BulletSkree.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Define.h" />
@@ -190,14 +192,18 @@
     <ClInclude Include="ExplodeEffect.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Gate.h" />
+    <ClInclude Include="GateBlock.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="Kraid.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MaruMari.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Metroid.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Ridley.h" />
     <ClInclude Include="Samus.h" />
     <ClInclude Include="SDKsound.h" />
     <ClInclude Include="SDKwavefile.h" />
@@ -224,13 +230,11 @@
     <Image Include="sprites\Player_32x16.png" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\BULLET_SKREE.txt" />
     <Text Include="enemy\BEE_FLY.txt" />
     <Text Include="enemy\BIRD_FLY.txt" />
     <Text Include="enemy\BLOCK_LEFT.txt" />
     <Text Include="enemy\BLOCK_RIGHT.txt" />
     <Text Include="enemy\ENEMY_DETROYED.txt" />
-    <Text Include="enemy\SKREE.txt" />
     <Text Include="enemy\ZOOMER_PINK_BOTTOM.txt" />
     <Text Include="enemy\ZOOMER_PINK_LEFT.txt" />
     <Text Include="enemy\ZOOMER_PINK_RIGHT.txt" />
