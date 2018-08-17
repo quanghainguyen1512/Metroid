@@ -3,7 +3,6 @@
 #include <cmath>
 #include "Math.h"
 #include "Define.h"
-#include "Collision.h"
 
 class Grid {
 private:
@@ -27,7 +26,10 @@ public:
 
 	void handleSamus(GameObject*, GameObject*, COLLISION_DIRECTION, float collisionTime);
 	void handleZoomer(GameObject*, GameObject*, COLLISION_DIRECTION, float collisionTime);
-	void handleSkree(GameObject* object, GameObject* otherObject, COLLISION_DIRECTION collisionDirection, float collisionTime);
-		
-	void showAllObject();
+	void handleSamusBullet(GameObject*, GameObject*, COLLISION_DIRECTION, float collisionTime);
+	void handleSkree(GameObject*, GameObject*, COLLISION_DIRECTION, float collisionTime);
+	void handleRidley(GameObject*, GameObject*, COLLISION_DIRECTION, float collisionTime);
+	void handleKraid(GameObject*, GameObject*, COLLISION_DIRECTION, float collisionTime);
+	void handleBoomerang(GameObject*, GameObject*, COLLISION_DIRECTION, float collisionTime);
+	void handleKraidBullet(GameObject*, GameObject*, COLLISION_DIRECTION, float collisionTime);
 };

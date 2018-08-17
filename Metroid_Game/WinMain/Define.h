@@ -9,6 +9,15 @@ class Game;
 class Bullet;
 class Grid;
 class GameObject;
+class CSound;
+class GameSound;
+class Map;
+class Gate;
+class KraidBomerang;
+class KraidBullet;
+class RidleyBullet;
+class Kraid;
+class Ridley;
 
 #define KEYBOARD_BUFFER_SIZE	1024
 #define KEY_DOWN(code) ( IsKeyDown(code) )
@@ -17,19 +26,33 @@ class GameObject;
 #define TIME_FREEZING 5000
 #define TIME_IN_GAME 7000
 
+#define JUMP_VELOCITY 150.0f
 #define JUMP_VELOCITY_BOOST 0.5f
-#define JUMP_VELOCITY_BOOST_FIRST 64.0f
-#define FALLDOWN_VELOCITY_DECREASE 0.3f
-#define GRAVITY_VELOCITY 0.5f
+#define JUMP_VELOCITY_BOOST_FIRST 28.0f
+#define FALLDOWN_VELOCITY_DECREASE 295.0f
+#define MAX_FALLING 600.0f
+#define GRAVITY_VELOCITY 250.0f
 #define ANIMATE_RATE 30
 #define LIVE_TIME 3000
+#define SAMUS_MAX_JUMP 182
+#define SAMUS_MIN_JUMP 64
 
 #define SAMUS_SPEED 200.0f
 #define FRICTION 1.0f
 #define TEXTURE_GAME_CHARACTERS L"sprites\\Player_32x16.png"
 
-#define collideHeight 64
+#define MAP_FULL_ROOM "map\\fieldFullRoom.txt"
+#define WIDTH_ROOM1 2272
+#define WIDTH_ROOM2 2048
+#define WIDTH_ROOM_BOSS 640
+#define HEIGHT_ROOM	480
 
+enum ROOM_NUMBER {
+	ROOM1,
+	ROOM2,
+	BOSS1,
+	BOSS2
+};
 //================ SCREEN RESOLUTION ================
 #define GAME_SCREEN_RESOLUTION_640_480_24   0
 #define GAME_SCREEN_RESOLUTION_800_600_24   1
@@ -65,8 +88,6 @@ enum SAMUS_STATE {
 	TRANSFORM_BALL_RIGHT,
 	JUMP_SHOOT_UP_LEFT,
 	JUMP_SHOOT_UP_RIGHT,
-	COLLIDE_RIGHT,
-	COLLIDE_LEFT
 };
 
 //================END SAMUS ====================
@@ -83,21 +104,21 @@ enum OBJECT_TYPE
 	ZOOMER_YELLOW,
 	ZOOMER_PINK,
 	SKREE,
+	SKREE_BULLET,
 	GATE_BLOCK,
 	RIDLEY,
-	MOTHER_BRAIN,
-	EXPLOSION,
+	KRAID,
+	EXPLOSION_BOMB,
 	MARU_MARI,
 	ENERGY_ITEM,
 	MISSILE_ITEM,
 	BOMB_ITEM,
-	BOMB_WEAPON
+	BOMB_WEAPON,
+	RIDLEY_BULLET,
+	KRAID_BOMERANG,
+	KRAID_BULLET
 };
 //================= END OBJECT TYPE ============
-
-//================= ITEM TYPE =================
-
-//
 
 //================= GAME SCENE ================
 #define STARTSCREEN_FILE L"scene\\start_background.png"
@@ -175,8 +196,8 @@ enum OBJECT_TYPE
 #define WIDTH_SAMUS_JUMPSHOOT 38
 #define HEIGHT_SAMUS_JUMPSHOOT 66
 #define COUNT_SAMUS_JUMPSHOOT 1
-#define JUMPSHOOTright_PATH L"sprites\\JUMPSHOOT_RIGHT.txt"
-#define JUMPSHOOTleft_PATH L"sprites\\JUMPSHOOT_LEFT.txt"
+#define JUMPSHOOTright_PATH L"sprites\\JUMPSHOOT_LEFT.txt"
+#define JUMPSHOOTleft_PATH L"sprites\\JUMPSHOOT_RIGHT.txt"
 
 #define WIDTH_SAMUS_RUN_SHOOTUP_right 40
 #define HEIGHT_SAMUS_RUN_SHOOTUP_right 78
@@ -200,8 +221,8 @@ enum OBJECT_TYPE
 //================ END ROOM LIMITATION ==================================
 
 //================ BRICK SIZE =============================================
-#define BRICK_SIZE 32
-#define BRICK_TEXTURE L"brick_32x32.png"
+#define BRICK_SIZE 32.0f
+#define BRICK_TEXTURE L"map\\brick_32x32.png"
 //================ END BRICK SIZE =========================================
 
 //================ GAME SOUND =============================================
@@ -220,7 +241,7 @@ enum OBJECT_TYPE
 #define MARU_MARI_WIDTH 24
 #define MARU_MARI_HEIGHT 26
 #define MARU_MARI_PATH L"sprites\\item\\MARU_MARI.txt"
-#define MARU_MARI_COUNT 2
+#define MARU_MARI_COUNT 1
 
 //========= ITEM ENERGY
 #define ITEM_ENERGY_WIDTH 16
@@ -234,7 +255,7 @@ enum OBJECT_TYPE
 #define ITEM_MISSILE_WIDTH 16
 #define ITEM_MISSILE_HEIGHT 24
 #define ITEM_MISSILE L"sprites\\item\\ITEM_MISSILE.txt"
-#define ITEM_MISSILE_COUNT 2
+#define ITEM_MISSILE_COUNT 1
 
 #define ITEM_MISSILE_GAIN 3
 //========= ITEM BOMB
@@ -244,20 +265,8 @@ enum OBJECT_TYPE
 #define ITEM_BOMB_COUNT 1
 //================ END GAME ITEM ===================================
 
-//================= ENEMY TYPE =================
-enum ENEMY_TYPE
-{
-	/*ZOOMER_YELLOW = 0,
-	ZOOMER_PINK = 1,
-	BIRD = 2,
-	BLOCK = 3,
-	BEE = 4,
-	RIDLEY = 5,
-	MOTHER_BRAIN = 6,*/
-};
-//================= END ENEMY TYPE =============
-
 //================== ENEMY =====================
+
 //================== ZOOMER =====================
 enum ZOOMER_STATE
 {
@@ -310,6 +319,86 @@ enum ZOOMER_DIRECTION {
 #define ZOOMER_PINK_RIGHT L"enemy\\ZOOMER_PINK_RIGHT.txt"
 //================== END ZOOMER =================
 
+
+//================== SKREE  =====================
+enum SKREE_STATE
+{
+	ON_HANGING,
+	ON_FALLING,
+	LANDED,
+	SHOT,
+	EXPLOSION_STATE,
+	KILLED
+};
+
+enum Bullet_Skree_Direction {
+	BULLET_RIGHT,
+	BULLET_LEFT,
+	BULLET_TOPRIGHT,
+	BULLET_TOPLEFT
+};
+
+#define BULLET_SKREE_PATH L"enemy\\BULLET_SKREE.txt"
+#define SKREE_BULLET_WIDTH 18
+#define SKREE_BULLET_HEIGHT 18 
+#define SKREE_BULLET_DISTANCE 75.0f
+#define SKREE_BULLET_SPEED 150.0f
+
+#define SKREE_WIDTH 36
+#define SKREE_HEIGHT 52
+
+#define SKREE_COUNT 3
+
+#define SKREE_PATH L"enemy\\SKREE.txt"
+
+#define SKREE_STANDARD_ANIMATE_RATE 7
+#define SKREE_BOOST_ANIMATE_RATE 30
+
+#define ZOOMER_CASE 0
+#define SKREE_CASE 2
+#define RIDLEY_CASE 3
+#define KRAID_CASE 4
+
+#define SKREE_DISTANCE_TO_SAMUS  300.0f
+#define SKREE_SPEED 150.0f
+
+#define SKREE_BULLET_SPEED 125.0f
+#define SKREE_BULLET_DISTANCE 75.0f
+
+#define SKREE_LIVE_TIME 50.0f
+
+//================== END SKREE =================
+
+//================ GATE ===============
+#define GATE_SPRITES_PATH L"sprites\\gate\\GATE_32.png"
+#define GATE_LEFT_EXISTS L"sprites\\gate\\GATE_LEFT_EXISTS.txt"
+#define GATE_RIGHT_EXISTS L"sprites\\gate\\GATE_RIGHT_EXISTS.txt"
+#define GATE_EXISTS_COUNT 1
+
+#define GATE_LEFT_DESTROYING L"sprites\\gate\\GATE_LEFT_DESTROYING.txt"
+#define GATE_RIGHT_DESTROYING L"sprites\\gate\\GATE_RIGHT_DESTROYING.txt"
+#define GATE_DESTROYING_COUNT 3
+
+#define GATE_WIDTH 16
+#define GATE_HEIGHT 96
+
+#define GATE_BLOCK_PATH L"sprites\\gate\\GATE_BLOCK.txt"
+#define GATE_BLOCK_WIDTH 64
+#define GATE_BLOCK_HEIGHT 96
+
+#define GATE_TIME_SURVIVE 3000
+//================= END GATE ===========
+
+//================== EXPLOSION =================
+#define EXPLOSION L"enemy\\ENEMY_DETROYED.txt"
+#define EXPLOSION_PATH L"enemy\\explosion.png"
+#define EXPLOSION_COUNT 1
+#define EXPLOSION_WIDTH 48
+#define EXPLOSION_HEIGHT 48
+
+//================== END EXPLOSION =================
+
+
 //================== BIRD  =====================
 
 #define BIRD_WIDTH 36
@@ -335,6 +424,28 @@ enum ZOOMER_DIRECTION {
 #define BLOCK_RIGHT "sprites\\enemy\\BLOCK_RIGHT.txt"
 //================== END BLOCK =================
 
+//================ BOMB =====================
+#define BOMB_PATH L"sprites\\item\\BOMB.txt"
+#define BOMB_WIDTH 19
+#define BOMB_HEIGHT 18
+#define BOMB_SPRITE_COUNT 2
+#define BOMB_TEXTURE L"sprites\\item\\bomb.png"
+
+//================ END BOMB =================
+
+//================ EFFECT ===================
+#define EFFECT_TIME_SURVIVE 1
+#define EFFECT_SPRITE_PATH L"sprites\\explode_effect\\explosion.png"
+
+//========== EFFECT EXPLOSION
+#define EFFECT_EXPLOSION L"sprites\\explode_effect\\EFFECT_EXPLOSION.txt"
+#define EFFECT_EXPLOSION_WIDTH 64
+#define EFFECT_EXPLOSION_HEIGHT 64
+#define EFFECT_EXPLOSION_COUNT 3
+
+//================ END EFFECT ===============
+
+
 //================== BEE  =====================
 
 #define BEE_WIDTH 52
@@ -350,12 +461,11 @@ enum ZOOMER_DIRECTION {
 
 //================== Bullet ====================
 #define SAMUS_BULLET_PATH L"sprites\\item\\bullet.png"
-#define X_VELOCITY_BULLET 12
-#define Y_VELOCITY_BULLET 12
+#define X_VELOCITY_BULLET 600.0f
+#define Y_VELOCITY_BULLET 600.0f
 #define BULLET_COUNT 8
 #define WIDTH_BULLET 12
 #define HEIGHT_BULLET 14
-#define BULLET_DAMGE 8
 
 enum Bullet_SAMUS_Direction
 {
@@ -382,43 +492,60 @@ enum COLLISION_DIRECTION {
 };
 //================== END Grid ====================
 
-#define ZOOMER_YELLOW_CASE 0
-#define ZOOMER_PINK_CASE 1
-#define SKREE_CASE 2
-#define RIO_CASE 3
+//================== BOSS ====================
+#define BOSS_TEXTURE L"enemy\\boss_sheet.png"
+//---------RIDLEY------------
+#define WIDTH_RIDLEY 96
+#define HEIGHT_RIDLEY_SIT 120
+#define HEIGHT_RIDLEY_FLY 139
+#define RIDLEY_ANIMATE_RATE 15
+#define RIDLEY_COUNT 2
+#define RIDLEY_SIT_LEFT_PATH L"enemy\\RIDLEY_SIT_LEFT.txt"
+#define RIDLEY_SIT_RIGHT_PATH L"enemy\\RIDLEY_SIT_RIGHT.txt"
+#define RIDLEY_FLY_LEFT_PATH L"enemy\\RIDLEY_FLY_RIGHT.txt"
+#define RIDLEY_FLY_RIGHT_PATH L"enemy\\RIDLEY_FLY_RIGHT.txt"
 
-//================== SKREE  =====================
+#define WIDTH_RIDLEY_BULLET 23
+#define HEIGHT_RIDLEY_BULLET 24
+#define RIDLEY_BULLET_COUNT 4
+#define RIDLEY_BULLET_PATH L"enemy\\RIDLEY_BULLET.txt"
 
-#define SKREE_WIDTH 36
-#define SKREE_HEIGHT 52
+enum RIDLEY_STATE {
+	SIT_LEFT,
+	FLY_LEFT,
+	SIT_RIGHT,
+	FLY_RIGHT
+};
+//---------END RIDLEY--------
 
-#define SKREE_COUNT 3
+//---------KRAID-------------
+enum KraidState {
+	KRAID_LEFT,
+	KRAID_RIGHT
+};
 
-#define SKREE_PATH L"enemy\\SKREE.txt"
+enum BULLET_KRAID_STATE {
+	BULLET_KRAID_LEFT,
+	BULLET_KRAID_RIGHT
+};
+#define KRAID_ANIMATE_RATE 15
+#define WIDTH_KRAID 70
+#define HEIGHT_KRAID 96
+#define KRAID_COUNT 2
+#define KRAID_RIGHT_PATH L"enemy\\KRAID_RIGHT.txt"
+#define KRAID_LEFT_PATH L"enemy\\KRAID_LEFT.txt"
 
-#define SKREE_STANDARD_ANIMATE_RATE 7
-#define SKREE_BOOST_ANIMATE_RATE 30
+#define SIZE_KRAID_BOMERANG 25
+#define COUNT_KRAID_BOMERANG 4
+#define KRAID_BOMERANG_PATH L"enemy\\KRAID_BOMERANG.txt"
 
-#define ZOOMER_YELLOW_CASE 0
-#define ZOOMER_PINK_CASE 1
-#define SKREE_CASE 2
-#define RIO_CASE 3
+#define WIDTH_KRAID_BULLET 26
+#define HEIGHT_KRAID_BULLET 11
+#define COUNT_KRAID_BULLET 1
+#define KRAID_BULLET_LEFT_PATH L"enemy\\KRAID_BULLET_LEFT.txt"
+#define KRAID_BULLET_RIGHT_PATH L"enemy\\KRAID_BULLET_RIGHT.txt"
 
-#define SKREE_DISTANCE_TO_SAMUS  300.0f
-#define SKREE_SPEED 150.0f
-
-#define SKREE_BULLET_SPEED 125.0f
-#define SKREE_BULLET_DISTANCE 75.0f
-
-#define SKREE_LIVE_TIME 50.0f
-
-//================== END SKREE =================
-
-//================== EXPLOSION =================
-#define EXPLOSION L"enemy\\ENEMY_DETROYED.txt"
-#define EXPLOSION_PATH L"enemy\\explosion.png"
-#define EXPLOSION_COUNT 1
-#define EXPLOSION_WIDTH 48
-#define EXPLOSION_HEIGHT 48
-
-//================== END EXPLOSION =================
+#define RANGE_BULLET_KRAID 192.0f
+#define KRAID_BULLET_SPEED 250.0f
+//---------END KRAID---------
+//================== END BOSS ====================

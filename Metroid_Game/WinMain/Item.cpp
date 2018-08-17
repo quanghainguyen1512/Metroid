@@ -54,10 +54,8 @@ void Item::Update(float t)
 	if (!isActive)
 		return;
 
-	// Tính thời gian hiển thị
 	time_survive -= t;
 
-	// Nếu hết thời gian thì không hiển thị nữa
 	if (time_survive <= 0)
 	{
 		isActive = false;

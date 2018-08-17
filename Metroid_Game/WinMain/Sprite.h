@@ -3,7 +3,7 @@
 #include <d3dx9.h>
 #include "Define.h"
 #include "DeviceManager.h"
-#include "DXGraphics.h"
+#include "Graphics.h"
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -45,4 +45,7 @@ public:
 
 	void setHeight(int value);
 	int getHeight();
+
+	int GetIndex();
+	int GetCount();
 };

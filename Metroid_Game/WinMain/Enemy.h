@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "GameObject.h"
-//#include "BulletManager.h"
 #include <time.h>
 
 #define ANIMATE_ENEMY_RATE 7
@@ -9,13 +8,14 @@
 class Enemy : public GameObject
 {
 protected:
-	ENEMY_TYPE enemy_type;
 	LPDIRECT3DTEXTURE9 texture;
 	float initPosX;
 	float initPosY;
+	float isEnemyFreezed;
+	DWORD timeStartDie;
 public:
 	float time_freeze;	// thời gian dừng khi bị hit
-	float health;		// Máu của object
+	int health;		// Máu của object
 	float damage;		// Lượng sát thương gây ra của object
 	bool DeathByShoot;
 
@@ -30,19 +30,14 @@ public:
 	virtual void InitPostition(int x, int y);
 	virtual void InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture);
 
-	ENEMY_TYPE GetEnemyType();
-	void SetEnemyType(ENEMY_TYPE enemy_type);
-
 	//============== OVERRIDE VIRTUAL METHOD ===============
 	virtual void Render();
 	virtual void Update(float t);
 	virtual void setEnemyStatefromString(string _state);
 	virtual void startMoving();
-	virtual void Destroy();
-	virtual void setSamusLocation(int _posX, int _posY);
-	virtual void startMovingBySamus(int _posX, int _posY);
-	virtual void handleBullet(int bulletType);
 	//============== END OVERRIDE VIRTUAL METHOD ============
+
+	virtual void setSamusLocation(float posX, float posY);
 
 	bool isInsideMapBound(RECT cameraBound);
 
@@ -53,5 +48,14 @@ public:
 	float getInitPosX();
 	void setInitPosY(float y);
 	float getInitPosY();
+
+	void setHealth(int value) { this->health = value; }
+	int getHealth() { return this->health; }
+
+	void setIsEnemyFreezed(bool value) { this->isEnemyFreezed = value; }
+	bool getIsEnemyFreezed() { return this->isEnemyFreezed; }
+
+	void setTimeStartDie(DWORD value) { this->timeStartDie = value; }
+	DWORD getTimeStartDie() { return this->timeStartDie; }
 };
 

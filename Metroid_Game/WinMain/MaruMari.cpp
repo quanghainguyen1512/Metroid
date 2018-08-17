@@ -3,13 +3,6 @@
 
 MaruMari::MaruMari(LPD3DXSPRITE spriteHandler, World * manager) :Item(spriteHandler, manager)
 {
-	//this->setType(MARU_MARI);
-	//this->type = MARU_MARI;
-	//item = NULL;
-	//isActive = true;
-
-	//this->previousUnit = NULL;
-	//this->nextUnit = NULL;
 	this->width = 32;
 	this->height = 32;
 }
@@ -22,19 +15,11 @@ MaruMari::~MaruMari()
 void MaruMari::InitSprites(LPDIRECT3DDEVICE9 d3ddv, LPDIRECT3DTEXTURE9 texture)
 {
 	if (d3ddv == NULL) return;
-	//Create sprite handler
+	
 	HRESULT result = D3DXCreateSprite(d3ddv, &spriteHandler);
 	if (result != D3D_OK) return;
 	item = new Sprite(spriteHandler, texture, MARU_MARI_PATH, MARU_MARI_WIDTH, MARU_MARI_HEIGHT, MARU_MARI_COUNT);
 }
-
-//void MaruMari::Init(float posX, float posY)
-//{
-//	this->pos_x = posX;
-//	this->pos_y = posY;
-//	this->isActive = true;
-//	time_survive = ITEM_TIME_SURVIVE;
-//}
 
 void MaruMari::Update(float t)
 {
@@ -45,52 +30,7 @@ void MaruMari::Update(float t)
 		item->updateSprite();
 		last_time = now;
 	}
-
-	//if (!isActive)
-	//	return;
-
-	//vy -= FALLDOWN_VELOCITY_DECREASE;
-
-
-	//// Xét va chạm với ground
-	//for (int i = 0; i < manager->quadtreeGroup->size; i++)
-	//{
-	//	switch (manager->quadtreeGroup->objects[i]->GetType())
-	//	{
-	//	case BRICK:
-	//		float timeScale = SweptAABB(manager->quadtreeGroup->objects[i], t);
-
-	//		// Chỉ cần xét va chạm phía trên cục gạch thôi
-	//		if (timeScale < 1.0f && normaly > 0.1f)
-	//		{
-	//			this->pos_y = (manager->quadtreeGroup->objects[i]->GetPosY() + manager->quadtreeGroup->objects[i]->GetCollider()->GetTop() - this->collider->GetBottom()) + 0.1f;
-	//			pos_y -= vy*t;
-	//		}
-	//		break;
-	//	}
-	//}
-
-	//pos_x += vx*t;
-	//pos_y += vy*t;
-
-	// Morph ball không cần set thời gian để biến mất như những item khác
-	// xxx
 }
-
-//void MaruMari::Render()
-//{
-//	D3DXVECTOR3 position;
-//	position.x = pos_x;
-//	position.y = pos_y;
-//	position.z = 0;
-//
-//	if (!isActive)
-//		return;
-//
-//	spriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
-//	item->drawSprite(item->getWidth(), item->getHeight(), position);
-//	spriteHandler->End();
-//}
 
 void MaruMari::touchedBySamus(Samus * samus)
 {

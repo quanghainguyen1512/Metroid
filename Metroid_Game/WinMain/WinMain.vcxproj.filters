@@ -13,20 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\FrameWork">
-      <UniqueIdentifier>{678bb3a7-ca97-45cf-9bcd-3dee9c30b2fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\FrameWork">
       <UniqueIdentifier>{2af07c6e-8845-4dd3-9c1c-f110be95e3cc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Drawable">
       <UniqueIdentifier>{c1d04f91-a53a-4096-9137-7b2633b660c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Drawable">
-      <UniqueIdentifier>{ea31125d-b62e-4b17-8903-6e74bc990afe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Character">
-      <UniqueIdentifier>{5030f85d-3c05-4b16-a8d2-ca338dbecf49}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Character">
       <UniqueIdentifier>{95f75cfd-e3da-418d-977c-5c37242881bc}</UniqueIdentifier>
@@ -40,17 +31,8 @@
     <Filter Include="Resource Files\sound\background">
       <UniqueIdentifier>{4f8e5503-0ef4-4a12-9db7-c24892cf948b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\SoundLibrary">
-      <UniqueIdentifier>{8599e4fb-43ae-4a88-afce-68b75b68095e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\SoundLibrary">
-      <UniqueIdentifier>{0a83b4c0-153c-4ebd-809f-24bd31f30fb6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\scene">
       <UniqueIdentifier>{8c74e5bf-f862-4d4a-9c07-46156ee439e3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Item">
-      <UniqueIdentifier>{9db79bf7-c169-4cac-b68f-c68ea48ce7b2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\sprites\item">
       <UniqueIdentifier>{fb1abdc0-0e80-45e5-8574-a60b549521f6}</UniqueIdentifier>
@@ -58,14 +40,50 @@
     <Filter Include="Source Files\Enemy">
       <UniqueIdentifier>{779cf9dd-5114-461b-90fb-89cd3f0aae96}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Enemy">
-      <UniqueIdentifier>{b30fca7c-048a-4271-9914-f45089ec159b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\enemy">
       <UniqueIdentifier>{fc10af0f-6843-41ef-a031-9203a5d2d817}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Item">
+    <Filter Include="Source Files\Effect">
+      <UniqueIdentifier>{176e7ab7-e272-4947-bcef-1bd2f6cbfd3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Character">
+      <UniqueIdentifier>{5030f85d-3c05-4b16-a8d2-ca338dbecf49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Drawable">
+      <UniqueIdentifier>{ea31125d-b62e-4b17-8903-6e74bc990afe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Effect">
+      <UniqueIdentifier>{52fa9a98-7600-4a9c-82e3-266121ff0e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Enemies">
+      <UniqueIdentifier>{b30fca7c-048a-4271-9914-f45089ec159b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Framework">
+      <UniqueIdentifier>{678bb3a7-ca97-45cf-9bcd-3dee9c30b2fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Bosses">
+      <UniqueIdentifier>{7b990ce5-c4cb-4b9b-af89-5d43c8d61c87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects">
+      <UniqueIdentifier>{6e7200ec-7201-4eec-9abb-ae5bdcba550e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Weapons">
+      <UniqueIdentifier>{60484122-3518-48f0-983a-cd785f3ebd78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Weapons">
+      <UniqueIdentifier>{da6c68fa-e416-471e-a967-91296d04be72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bosses">
+      <UniqueIdentifier>{135b8040-2463-4c18-80ba-0b464dccf422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{1e653a46-375c-48b8-9499-157e94fc66ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Items">
       <UniqueIdentifier>{3a286a5a-2c87-4c65-ad2e-8e733602fe84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Items">
+      <UniqueIdentifier>{9db79bf7-c169-4cac-b68f-c68ea48ce7b2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -87,9 +105,6 @@
     <ClCompile Include="Input.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="DXGraphics.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="DeviceManager.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
@@ -108,20 +123,11 @@
     <ClCompile Include="Samus.cpp">
       <Filter>Source Files\Character</Filter>
     </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>Source Files\Character</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>Source Files\Character</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files\Enemy</Filter>
@@ -130,39 +136,75 @@
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Item.cpp">
-      <Filter>Source Files\Item</Filter>
+      <Filter>Source Files\Items</Filter>
     </ClCompile>
     <ClCompile Include="MaruMari.cpp">
-      <Filter>Source Files\Item</Filter>
+      <Filter>Source Files\Items</Filter>
     </ClCompile>
     <ClCompile Include="Grid.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>Source Files\FrameWork</Filter>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Source Files\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Brick.cpp">
-      <Filter>Source Files\Drawable</Filter>
+    <ClCompile Include="ExplodeEffect.cpp">
+      <Filter>Source Files\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Skree.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="BombItem.cpp">
-      <Filter>Source Files\Item</Filter>
+      <Filter>Source Files\Items</Filter>
     </ClCompile>
     <ClCompile Include="EnergyItem.cpp">
-      <Filter>Source Files\Item</Filter>
+      <Filter>Source Files\Items</Filter>
     </ClCompile>
     <ClCompile Include="MissileItem.cpp">
-      <Filter>Source Files\Item</Filter>
+      <Filter>Source Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="BombWeapon.cpp">
+      <Filter>Source Files\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletKraid.cpp">
+      <Filter>Source Files\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletSkree.cpp">
+      <Filter>Source Files\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="KraidBoomerang.cpp">
+      <Filter>Source Files\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="Kraid.cpp">
+      <Filter>Source Files\Bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="Ridley.cpp">
+      <Filter>Source Files\Bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="Brick.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Gate.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GateBlock.cpp">
+      <Filter>Source Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
-      <Filter>Header Files\FrameWork</Filter>
+      <Filter>Header Files\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Metroid.h">
-      <Filter>Header Files\FrameWork</Filter>
+      <Filter>Header Files\Framework</Filter>
     </ClInclude>
     <ClInclude Include="trace.h">
       <Filter>Header Files</Filter>
@@ -171,16 +213,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>Header Files\FrameWork</Filter>
+      <Filter>Header Files\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Define.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXGraphics.h">
-      <Filter>Header Files\FrameWork</Filter>
-    </ClInclude>
     <ClInclude Include="DeviceManager.h">
-      <Filter>Header Files\FrameWork</Filter>
+      <Filter>Header Files\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Header Files\Drawable</Filter>
@@ -197,53 +236,83 @@
     <ClInclude Include="Samus.h">
       <Filter>Header Files\Character</Filter>
     </ClInclude>
-    <ClInclude Include="World.h">
-      <Filter>Header Files\Character</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound.h">
-      <Filter>Header Files\FrameWork</Filter>
+      <Filter>Header Files\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Math.h">
-      <Filter>Header Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>Header Files\Character</Filter>
+      <Filter>Header Files\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Header Files\Enemy</Filter>
+      <Filter>Header Files\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Zoomer.h">
-      <Filter>Header Files\Enemy</Filter>
+      <Filter>Header Files\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Item.h">
-      <Filter>Header Files\Item</Filter>
+      <Filter>Header Files\Items</Filter>
     </ClInclude>
     <ClInclude Include="MaruMari.h">
-      <Filter>Header Files\Item</Filter>
+      <Filter>Header Files\Items</Filter>
     </ClInclude>
     <ClInclude Include="Grid.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Header Files\FrameWork</Filter>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Brick.h">
-      <Filter>Header Files\Drawable</Filter>
+    <ClInclude Include="Effect.h">
+      <Filter>Header Files\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="ExplodeEffect.h">
+      <Filter>Header Files\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Skree.h">
-      <Filter>Header Files\Enemy</Filter>
+      <Filter>Header Files\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="BombItem.h">
-      <Filter>Header Files\Item</Filter>
+      <Filter>Header Files\Items</Filter>
     </ClInclude>
     <ClInclude Include="EnergyItem.h">
-      <Filter>Header Files\Item</Filter>
+      <Filter>Header Files\Items</Filter>
     </ClInclude>
     <ClInclude Include="MissileItem.h">
-      <Filter>Header Files\Item</Filter>
+      <Filter>Header Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletKraid.h">
+      <Filter>Header Files\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletSkree.h">
+      <Filter>Header Files\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="KraidBoomerang.h">
+      <Filter>Header Files\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="BombWeapon.h">
+      <Filter>Header Files\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Header Files\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Kraid.h">
+      <Filter>Header Files\Bosses</Filter>
+    </ClInclude>
+    <ClInclude Include="Ridley.h">
+      <Filter>Header Files\Bosses</Filter>
+    </ClInclude>
+    <ClInclude Include="Brick.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Gate.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GateBlock.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -390,11 +459,8 @@
     <Text Include="sprites\item\MARU_MARI.txt">
       <Filter>Resource Files\sprites\item</Filter>
     </Text>
-    <Text Include="enemy\Monster_Room1.txt">
-      <Filter>Resource Files\enemy</Filter>
-    </Text>
-    <Text Include="enemy\SKREE.txt">
-      <Filter>Resource Files\enemy</Filter>
+    <Text Include="Monster_Room1.txt">
+      <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -443,5 +509,10 @@
     <Media Include="sound\background\samus_death.wav">
       <Filter>Resource Files\sound\background</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="WinMain.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

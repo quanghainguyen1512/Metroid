@@ -8,8 +8,9 @@ Zoomer::Zoomer()
 
 Zoomer::Zoomer(LPD3DXSPRITE spriteHandler, World * manager, OBJECT_TYPE enemy_type) : Enemy(spriteHandler, manager)
 {
+	this->spriteHandler = spriteHandler;
 	this->setType(enemy_type);
-	this->isActive = false;
+	this->setActive(false);
 
 	//Set vận tốc
 	vx = 0.0f;
@@ -17,7 +18,13 @@ Zoomer::Zoomer(LPD3DXSPRITE spriteHandler, World * manager, OBJECT_TYPE enemy_ty
 	this->width = 30;
 	this->height = 30;
 
-	this->grid = manager->grid;
+	this->health = 100;
+
+	this->grid = manager->getMetroid()->getGrid();
+
+	this->isDeath = false;
+	this->setIsEnemyFreezed(false);
+	this->timeStartDie = 0.0f;
 }
 
 
@@ -84,6 +91,8 @@ void Zoomer::setEnemyStatefromString(string _state) {
 	else if (_state == "ON_ZOOMER_BOTTOM") {
 		setState(ON_ZOOMER_BOTTOM);
 	}
+
+	this->setInitState(this->getState());
 }
 
 void Zoomer::setState(ZOOMER_STATE _state) {
@@ -95,14 +104,15 @@ ZOOMER_STATE Zoomer::getState() {
 	return state;
 }
 
+void Zoomer::setSamusLocation(float posX, float posY)
+{
+}
+
 
 // Bắt đầu di chuyển khi camera đi tới
 void Zoomer::startMoving()
 {
-	this->setPosX(this->getInitPosX());
-	this->setPosY(this->getInitPosY());
-	this->setDirection(this->getInitDirection());
-	this->isActive = true;
+	
 }
 
 // Dùng để thiết lập vận tốc cho zoomer
@@ -156,14 +166,20 @@ void Zoomer::setVelocity() {
 
 void Zoomer::Update(float t)
 {
-	if (!this->isActive) return;
+	if (!this->isActive || this->isDeath) return;
+	if (this->isEnemyFreezed) {
+		this->isEnemyFreezed = false;
+		return;
+	}
+
 	this->setIsTopCollided(false);
 	this->setIsBottomCollided(false);
 	this->setIsRightCollided(false);
 	this->setIsLeftCollided(false);
 	this->setIsCollisionHandled(false);
 
-	this->setVelocity();
+	if (getHealth() > 30)
+		this->setVelocity();
 
 
 	GameObject* object = static_cast<GameObject*>(this);
@@ -332,14 +348,16 @@ void Zoomer::Update(float t)
 
 void Zoomer::Render()
 {
+	if (!isActive)
+		return;
+
 	D3DXVECTOR3 position;
 	position.x = pos_x;
 	position.y = pos_y;
 	position.z = 0;
 
 	// Nếu không active thì không render
-	if (!isActive)
-		return;
+
 	switch (state)
 	{
 	case ON_ZOOMER_UP:
@@ -357,9 +375,33 @@ void Zoomer::Render()
 	}
 }
 
-void Zoomer::Destroy()
+void Zoomer::Destroy(float x, float y)
 {
-	this->isActive = false;
+	if (this->health == 0)
+	{
+		manager->explodeEffect->setTimeSurvive(EFFECT_TIME_SURVIVE);
+		if (manager->explodeEffect->getTimeSurvive() > 0)
+		{
+			manager->explodeEffect->setActive(true);
+			manager->explodeEffect->setPosX(x - 32);
+			manager->explodeEffect->setPosY(y - 32);
+		}
+		this->isDeath = true;
+		this->isEnemyFreezed = false;
+
+		this->reset();
+		GameObject* object = static_cast<GameObject*>(this);
+		object->setActive(false);
+		this->grid->updateGrid(object, this->getPosX(), this->getPosY());
+		this->setTimeStartDie(GetTickCount());
+	}
+}
+
+void Zoomer::reset() {
+	this->pos_x = this->getInitPosX();
+	this->pos_y = this->getInitPosY();
+	this->direction = this->getInitDirection();
+	this->state = this->getInitState();
 }
 
 void Zoomer::setDirection(ZOOMER_DIRECTION direction) {

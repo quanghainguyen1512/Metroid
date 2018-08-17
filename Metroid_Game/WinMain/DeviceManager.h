@@ -1,5 +1,5 @@
 #pragma once
-#include "DXGraphics.h"
+#include "Graphics.h"
 
 class DeviceManager
 {
