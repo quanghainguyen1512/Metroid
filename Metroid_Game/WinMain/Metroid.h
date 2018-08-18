@@ -20,6 +20,9 @@ protected:
 	LPD3DXSPRITE spriteHandler;
 	LPDIRECT3DTEXTURE9 _texture;
 	World * world;
+	CSound * intro;
+	CSound * appear;
+	GameSound *sound;
 	Grid *grid;
 private:
 	void _InitBackground();

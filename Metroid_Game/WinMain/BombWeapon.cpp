@@ -41,7 +41,6 @@ void BombWeapon::Update(float t)
 {
 	if (isActive == true && isExplode == false)
 	{
-		// Animate samus if he is running
 		DWORD now = GetTickCount();
 		if (now - last_time > 1000 / ANIMATE_RATE)
 		{
@@ -49,9 +48,7 @@ void BombWeapon::Update(float t)
 			last_time = now;
 		}
 
-		// Tính thời gian hiển thị
 		time_survive -= t;
-		// Nếu hết thời gian thì nổ
 		if (time_survive <= 0)
 		{
 			isActive = false;

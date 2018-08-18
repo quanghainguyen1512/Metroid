@@ -19,5 +19,6 @@ public:
 	int getIndexX();
 	void setIndexY(int y);
 	int getIndexY();
+	void Destroy();
 };
 

@@ -16,8 +16,15 @@
 #include "BulletSkree.h"
 #include "BulletKraid.h"
 #include "KraidBoomerang.h"
+#include "BulletRidley.h"
+#include "Missile.h"
 
 using namespace std;
+
+/*
+Class này chứa tất cả những thứ trong Game
+Các class khác chứa con trỏ đến class này để thao tác với các đối tượng trong class này
+*/
 
 class World
 {
@@ -27,6 +34,7 @@ public:
 	MaruMari * maruMari;
 	ExplodeEffect* explodeEffect;
 	BombWeapon* bombWeapon;
+	Missile* missible;
 
 	Gate * gateLeftRoom1;
 	Gate * gateRightRoom1;
@@ -47,6 +55,7 @@ public:
 
 	vector<BulletKraid*> kraidBullet;
 	vector<KraidBoomerang*> kraidBomerang;
+	vector<BulletRidley*> ridleyBullet;
 
 	World();
 	World(LPD3DXSPRITE spriteHandler, Metroid * metroid);

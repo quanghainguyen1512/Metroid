@@ -48,3 +48,8 @@ void Brick::setIndexY(int y) {
 int Brick::getIndexY() {
 	return this->indexY;
 }
+
+void Brick::Destroy()
+{
+	this->isActive = false;
+}

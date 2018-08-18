@@ -7,7 +7,7 @@ void Metroid::_InitBackground()
 
 void Metroid::_InitSprites(LPDIRECT3DDEVICE9 d3ddv)
 {
-	world->InitSprites(d3ddv);	
+	world->InitSprites(d3ddv);
 }
 
 void Metroid::_InitPositions()
@@ -53,7 +53,7 @@ void Metroid::_InitPositions()
 
 }
 
-Metroid::Metroid(HINSTANCE hInstance, LPWSTR Name, int Mode, int IsFullScreen, int FrameRate) 
+Metroid::Metroid(HINSTANCE hInstance, LPWSTR Name, int Mode, int IsFullScreen, int FrameRate)
 	:Game(hInstance, Name, Mode, IsFullScreen, FrameRate)
 {
 	tick_per_frame = 1000 / _dxgraphics->getFrameRate();
@@ -61,8 +61,6 @@ Metroid::Metroid(HINSTANCE hInstance, LPWSTR Name, int Mode, int IsFullScreen, i
 	isOnFloor = false;
 	isInGame = false;
 	isFreezing = false;
-
-	//sound = new GameSound();	
 
 	time_jump = 3 * _DeltaTime;
 	time_freezing = TIME_FREEZING;
@@ -72,7 +70,7 @@ Metroid::Metroid(HINSTANCE hInstance, LPWSTR Name, int Mode, int IsFullScreen, i
 	startscreen = NULL;
 	gameoverscreen = NULL;
 
-	screenMode = GAMEMODE_GAMERUN; // GAMEMODE_INTRO;
+	screenMode = GAMEMODE_INTRO;
 }
 
 Metroid::~Metroid()
@@ -85,7 +83,7 @@ Metroid::~Metroid()
 }
 
 /*
-	Khoi tao Spritehandler va Texture cho game
+Khoi tao Spritehandler va Texture cho game
 */
 void Metroid::LoadResources(LPDIRECT3DDEVICE9 d3ddev)
 {
@@ -93,7 +91,7 @@ void Metroid::LoadResources(LPDIRECT3DDEVICE9 d3ddev)
 	if (d3ddev == NULL) return;
 
 	HRESULT result = D3DXCreateSprite(d3ddev, &spriteHandler);
-	if (result != D3D_OK) 
+	if (result != D3D_OK)
 		trace(L"Unable to create SpriteHandler");
 
 	_texture = texture.loadTexture(d3ddev, BRICK_TEXTURE);
@@ -113,7 +111,7 @@ void Metroid::LoadResources(LPDIRECT3DDEVICE9 d3ddev)
 	this->_InitSprites(d3ddev);
 	this->_InitPositions();
 
-	if (camera) 
+	if (camera)
 	{
 		camera->Follow(world->samus);
 		camera->SetMapBoundary(map->getBoundary());
@@ -176,7 +174,7 @@ void Metroid::UpdateFrame(float Delta)
 	}
 
 	world->Update(Delta);
-	
+
 
 	if (world->samus->isSamusDeath() == true)
 	{
@@ -187,16 +185,16 @@ void Metroid::UpdateFrame(float Delta)
 
 //render từng screen mode (room1, room2,... hay gameover)
 void Metroid::Render(LPDIRECT3DDEVICE9 d3ddv)
-{	
+{
 	switch (screenMode)
 	{
 		// intro
 	case GAMEMODE_INTRO:
-		//RenderIntro(d3ddv);
+		RenderIntro(d3ddv);
 		break;
 		// start screen
 	case GAMEMODE_START:
-		//RenderStartScreen(d3ddv);
+		RenderStartScreen(d3ddv);
 		break;
 		// game running
 	case GAMEMODE_GAMERUN:
@@ -204,7 +202,7 @@ void Metroid::Render(LPDIRECT3DDEVICE9 d3ddv)
 		break;
 		// game over
 	case GAMEMODE_GAMEOVER:
-		//RenderGameOver(d3ddv);
+		RenderGameOver(d3ddv);
 	default:
 		break;
 	}
@@ -302,7 +300,7 @@ void Metroid::ProcessInput(LPDIRECT3DDEVICE9 d3ddv, float Delta)
 			}
 		}
 	}
-	
+
 	else
 	{
 		world->samus->setVelocityX(0);
@@ -356,7 +354,7 @@ void Metroid::ProcessInput(LPDIRECT3DDEVICE9 d3ddv, float Delta)
 			samus->SetState(RUN_SHOOT_UP_LEFT);
 			break;
 		}
-		case RUNNING_RIGHT: case RUN_SHOOTING_RIGHT:{
+		case RUNNING_RIGHT: case RUN_SHOOTING_RIGHT: {
 			samus->SetState(RUN_SHOOT_UP_RIGHT);
 			break;
 		}
@@ -407,7 +405,7 @@ void Metroid::ProcessInput(LPDIRECT3DDEVICE9 d3ddv, float Delta)
 		}
 	}
 	else if (_input->IsKeyDown(DIK_DOWN)) {
-		if (this->world->samus->getIsBall() || !this->world->samus->getCanMorph()) {
+		if (this->world->samus->getIsBall()) {
 			return;
 		}
 
@@ -422,7 +420,10 @@ void Metroid::ProcessInput(LPDIRECT3DDEVICE9 d3ddv, float Delta)
 			this->world->samus->setIsBall(true);
 		}
 	}
-	
+
+	// Xử lý các sự kiện bắn, nhảy
+	// Z: bắn
+	// X: nhảy
 	if (_input->IsKeyDown(DIK_Z)) {
 		for (int i = 0; i < this->world->samusBullet.size(); i++) {
 			if (i == 0) {
@@ -445,7 +446,7 @@ void Metroid::ProcessInput(LPDIRECT3DDEVICE9 d3ddv, float Delta)
 			this->world->samus->SetState(RUN_SHOOTING_LEFT);
 		}
 	}
-		
+
 	if (_input->IsKeyDown(DIK_X))
 	{
 		if (world->samus->canJump) {
@@ -453,7 +454,7 @@ void Metroid::ProcessInput(LPDIRECT3DDEVICE9 d3ddv, float Delta)
 			this->world->samus->setVelocityY(-GRAVITY_VELOCITY);
 			this->world->samus->isJumping = true;
 			this->world->samus->isFalling = false;
-			
+
 			if (state == STAND_RIGHT) {
 				samus->SetState(JUMP_RIGHT);
 
@@ -493,53 +494,76 @@ void Metroid::OnKeyDown(int KeyCode)
 	switch (screenMode)
 	{
 		// intro
-		case GAMEMODE_INTRO:
+	case GAMEMODE_INTRO:
+	{
+		if (KeyCode == DIK_RETURN)
 		{
-			if (KeyCode == DIK_RETURN)
-			{
-				screenMode = GAMEMODE_START;
-			}
-			break;
+			screenMode = GAMEMODE_START;
 		}
-		// start screen
-		case GAMEMODE_START://------------------------------------------------
+		break;
+	}
+	// start screen
+	case GAMEMODE_START://------------------------------------------------
+	{
+		if (KeyCode == DIK_RETURN)
 		{
-			if (KeyCode == DIK_RETURN)
-			{
-				screenMode = GAMEMODE_GAMERUN;
-				//sound->Stopsound(intro);
-				/*CSound * appear = sound->LoadSound(APPEARING_SOUND);
-				if (appear != NULL)
-				sound->Loopsound(appear);*/
-				isInGame = true;
+			screenMode = GAMEMODE_GAMERUN;
+			//sound->Stopsound(intro);
+			/*CSound * appear = sound->LoadSound(APPEARING_SOUND);
+			if (appear != NULL)
+			sound->Loopsound(appear);*/
+			isInGame = true;
+		}
+		break;
+	}
+	// game running
+	case GAMEMODE_GAMERUN:// -------------------------------------------------
+	{
+		switch (KeyCode)
+		{
+		case DIK_SPACE:
+			if (this->world->samus->isOnGround) {
+				if (_input->IsKeyDown(DIK_SPACE) && world->bombWeapon->getBombExplode() == true)
+				{
+					world->bombWeapon->setActive(true);
+					world->bombWeapon->setTimeSurvive(1);
+					world->bombWeapon->setBombExplode(false);
+
+					float xpos = world->samus->getPosX();
+					float ypos = world->samus->getPosY();
+					float bombPosX = xpos + world->samus->getWidth() / 2;
+					float bombPosY = ypos + world->samus->getHeight() / 2;
+					world->bombWeapon->setPosX(bombPosX);
+					world->bombWeapon->setPosY(bombPosY);
+				}
 			}
 			break;
-		}		
-		// game running
-		case GAMEMODE_GAMERUN:// -------------------------------------------------
+		case DIK_X:
 		{
-			switch (KeyCode)
-			{
-			case DIK_SPACE:
-				if (this->world->samus->isOnGround) {
-					if (_input->IsKeyDown(DIK_SPACE) && world->bombWeapon->getBombExplode() == true)
-					{
-						world->bombWeapon->setActive(true);
-						world->bombWeapon->setTimeSurvive(3);
-						world->bombWeapon->setBombExplode(false);
+			if (this->world->samus->getIsBall()) {
+				vector<string> stringMap = this->map->getStringMap();
+				if (stringMap.size() > 0) {
+					int column = (int)floor(this->world->samus->pos_x / 32.0f);
+					int row = (int)floor(this->world->samus->pos_y / 32.0f);
 
-						float xpos = world->samus->getPosX();
-						float ypos = world->samus->getPosY();
-						float bombPosX = xpos + world->samus->getWidth() / 2;
-						float bombPosY = ypos + world->samus->getHeight() / 2;
-						world->bombWeapon->setPosX(bombPosX);
-						world->bombWeapon->setPosY(bombPosY);
+					int column2 = (int)ceil(this->world->samus->pos_x / 32.0f);
+
+					if (row <= stringMap.size() && column <= stringMap[0].size() && column2 <= stringMap[0].size()) {
+						if (stringMap[row - 1][column] == '0' && stringMap[row - 1][column2] == '0') {
+							this->world->samus->setPosY(this->world->samus->getPosY() - 32);
+							world->samus->setIsBall(false);
+							if (world->samus->GetState() == TRANSFORM_BALL_RIGHT) {
+								world->samus->SetState(STAND_RIGHT);
+							}
+							else if (world->samus->GetState() == TRANSFORM_BALL_LEFT) {
+								world->samus->SetState(STAND_LEFT);
+							}
+						}
 					}
 				}
-				break;
-			case DIK_X:
-			{
-				if (this->world->samus->getIsBall()) {
+			}
+			else {
+				if (this->world->samus->isOnGround) {
 					vector<string> stringMap = this->map->getStringMap();
 					if (stringMap.size() > 0) {
 						int column = (int)floor(this->world->samus->pos_x / 32.0f);
@@ -549,84 +573,102 @@ void Metroid::OnKeyDown(int KeyCode)
 
 						if (row <= stringMap.size() && column <= stringMap[0].size() && column2 <= stringMap[0].size()) {
 							if (stringMap[row - 1][column] == '0' && stringMap[row - 1][column2] == '0') {
-								this->world->samus->setPosY(this->world->samus->getPosY() - 32);
-								world->samus->setIsBall(false);
-								if (world->samus->GetState() == TRANSFORM_BALL_RIGHT) {
-									world->samus->SetState(STAND_RIGHT);
-								}
-								else if (world->samus->GetState() == TRANSFORM_BALL_LEFT) {
-									world->samus->SetState(STAND_LEFT);
-								}
+								this->world->samus->canJump = true;
+								this->world->samus->setStartPosJump(this->world->samus->getPosY());
 							}
 						}
 					}
-				}
-				else {
-					if (this->world->samus->isOnGround) {
-						vector<string> stringMap = this->map->getStringMap();
-						if (stringMap.size() > 0) {
-							int column = (int)floor(this->world->samus->pos_x / 32.0f);
-							int row = (int)floor(this->world->samus->pos_y / 32.0f);
 
-							int column2 = (int)ceil(this->world->samus->pos_x / 32.0f);
-
-							if (row <= stringMap.size() && column <= stringMap[0].size() && column2 <= stringMap[0].size()) {
-								if (stringMap[row - 1][column] == '0' && stringMap[row - 1][column2] == '0') {
-									this->world->samus->canJump = true;
-									this->world->samus->setStartPosJump(this->world->samus->getPosY());
-								}
-							}
-						}
-						
-					}
 				}
 			}
-				break;
-			case DIK_LEFT:
-				if (world->samus->GetState() == MORPH_RIGHT)
-					world->samus->SetState(MORPH_LEFT);
-				else if (world->samus->GetState() == JUMP_RIGHT)
-					world->samus->setStartPosJump(JUMP_LEFT);
-				break;
-			case DIK_RIGHT:
-				if (world->samus->GetState() == MORPH_LEFT)
-					world->samus->SetState(MORPH_RIGHT);
-				else if (world->samus->GetState() == JUMP_LEFT)
-					world->samus->SetState(JUMP_RIGHT);
-				break;
-			case DIK_DOWN:
-				if (this->world->samus->getIsBall()) {
-					return;
-				}
-
-				if (this->world->samus->GetState() == STAND_LEFT) {
-					this->world->samus->setPosY(this->world->samus->getPosY() + 32);
-					this->world->samus->SetState(TRANSFORM_BALL_LEFT);
-					this->world->samus->setIsBall(true);
-				}
-				else if (this->world->samus->GetState() == STAND_RIGHT) {
-					this->world->samus->setPosY(this->world->samus->getPosY() + 32);
-					this->world->samus->SetState(TRANSFORM_BALL_RIGHT);
-					this->world->samus->setIsBall(true);
-				}
-				break;
-			}
-		case DIK_UP: {
-
-			break;
-		}
 		}
 		break;
-		// game over
-		case GAMEMODE_GAMEOVER://------------------------------------------------
+
+		// C la ban ten lua
+		case DIK_C:
 		{
-			if (KeyCode == DIK_RETURN)
-			{
-				screenMode = GAMEMODE_INTRO;
-				//world->samus->Reset(1275, 150);
+			if (!this->world->missible->isActive) {
+				if (this->world->samus->getIsBall() || this->world->samus->isMorphing)
+					return;
+				else {
+					SAMUS_STATE samusState = this->world->samus->GetState();
+
+					switch (samusState) {
+					case STAND_LEFT: case RUNNING_LEFT: case JUMP_LEFT: case RUN_SHOOTING_LEFT: {
+						this->world->missible->isActive = true;
+						this->world->missible->setState(MISSIBLE_SHOT_LEFT);
+						break;
+					}
+
+					case STAND_RIGHT: case RUNNING_RIGHT: case JUMP_RIGHT: case RUN_SHOOTING_RIGHT: {
+						this->world->missible->isActive = true;
+						this->world->missible->setState(MISSIBLE_SHOT_RIGHT);
+						break;
+					}
+
+					case JUMP_SHOOT_UP_LEFT: case JUMP_SHOOT_UP_RIGHT: case STAND_SHOOT_UP_LEFT: case STAND_SHOOT_UP_RIGHT: {
+						this->world->missible->isActive = true;
+						this->world->missible->setState(MISSIBLE_SHOT_UP);
+						break;
+					}
+					}
+
+					if (samusState == RUNNING_RIGHT) {
+						this->world->samus->SetState(RUN_SHOOT_UP_RIGHT);
+					}
+					else if (samusState == RUNNING_LEFT) {
+						this->world->samus->SetState(RUN_SHOOT_UP_LEFT);
+					}
+				}
+			}
+		}
+		break;
+
+		case DIK_LEFT:
+			if (world->samus->GetState() == MORPH_RIGHT)
+				world->samus->SetState(MORPH_LEFT);
+			else if (world->samus->GetState() == JUMP_RIGHT)
+				world->samus->setStartPosJump(JUMP_LEFT);
+			break;
+		case DIK_RIGHT:
+			if (world->samus->GetState() == MORPH_LEFT)
+				world->samus->SetState(MORPH_RIGHT);
+			else if (world->samus->GetState() == JUMP_LEFT)
+				world->samus->SetState(JUMP_RIGHT);
+			break;
+		case DIK_DOWN:
+			if (this->world->samus->getIsBall()) {
+				return;
+			}
+
+			if (this->world->samus->GetState() == STAND_LEFT) {
+				this->world->samus->setPosY(this->world->samus->getPosY() + 32);
+				this->world->samus->SetState(TRANSFORM_BALL_LEFT);
+				this->world->samus->setIsBall(true);
+			}
+			else if (this->world->samus->GetState() == STAND_RIGHT) {
+				this->world->samus->setPosY(this->world->samus->getPosY() + 32);
+				this->world->samus->SetState(TRANSFORM_BALL_RIGHT);
+				this->world->samus->setIsBall(true);
 			}
 			break;
 		}
+	case DIK_UP: {
+
+		break;
+	}
+	}
+	break;
+	// game over
+	case GAMEMODE_GAMEOVER://------------------------------------------------
+	{
+		if (KeyCode == DIK_RETURN)
+		{
+			screenMode = GAMEMODE_INTRO;
+			//world->samus->Reset(1275, 150);
+		}
+		break;
+	}
 	}
 }
 
@@ -653,7 +695,7 @@ void Metroid::OnKeyUp(int KeyCode)
 	case DIK_DOWN:
 		break;
 
-	case DIK_X:{
+	case DIK_X: {
 		if (this->world->samus->canJump) {
 			this->world->samus->canJump = false;
 		}
@@ -690,7 +732,7 @@ void Metroid::setSamusBulletDirection(Bullet* bullet) {
 		bullet->setDirection(SHOOT_RIGHT);
 		break;
 	}
-	case STAND_SHOOT_UP_LEFT: case JUMP_SHOOT_UP_LEFT: case RUN_SHOOT_UP_LEFT:{
+	case STAND_SHOOT_UP_LEFT: case JUMP_SHOOT_UP_LEFT: case RUN_SHOOT_UP_LEFT: {
 		bullet->setDirection(SHOOT_UP_LEFT);
 		break;
 	}
